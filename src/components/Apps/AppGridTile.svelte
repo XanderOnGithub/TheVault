@@ -13,6 +13,9 @@
 
 		<!-- Description -->
 		<p class="description text-gray-600 text-sm font-light leading-[1.5]">{app.description}</p>
+
+		<!-- Platforms -->
+		<p class="platforms text-gray-500 text-xs font-light leading-[1.5] mt-2">{app.platform}</p>
 	</div>
 
 	<!-- Footer -->

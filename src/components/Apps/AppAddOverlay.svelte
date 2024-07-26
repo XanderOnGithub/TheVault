@@ -22,7 +22,7 @@
 			name: AppName,
 			organization: AppOrg,
 			description: AppDesc,
-			platforms: AppPlat,
+			platform: AppPlat,
 			version: AppVer,
 			link: AppLink,
 			price: AppPrice,
