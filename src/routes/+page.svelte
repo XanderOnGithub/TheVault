@@ -1,7 +1,7 @@
 <script>
 	import AppGridTile from '../components/Apps/AppGridTile.svelte';
-
-	import { filterApps, loadApps } from '../lib/AppService.js';
+	import AppAddOverlay from '../components/Apps/AppAddOverlay.svelte';
+	import { filterApps, loadApps, loadedApps } from '../lib/AppService.js';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
@@ -9,23 +9,43 @@
 	let targetApps = [];
 	let search = '';
 
-	onMount(async () => {
-		apps = await loadApps();
-		apps.data;
+	let isOverlayOpen = false;
+
+	function openOverlay() {
+		isOverlayOpen = true;
+	}
+
+	function closeOverlay() {
+		isOverlayOpen = false;
+	}
+
+	async function loadAppGrid() {
+		await loadApps();
+		apps = loadedApps;
 		targetApps = apps;
-	});
+	}
+
+	async function refreshApps() {
+		apps = loadedApps;
+		targetApps = apps;
+		search = '';
+	}
+
+	onMount(loadAppGrid);
 
 	function UpdateAppFilter() {
 		targetApps = filterApps(apps, search);
 	}
 </script>
 
+<AppAddOverlay {isOverlayOpen} onClose={closeOverlay} on:appAdded={refreshApps} />
+
 <!-- Search bar -->
-<form class="max-w-md mx-auto py-5">
+<form class="max-w-md mx-auto py-5 flex items-center">
 	<label for="default-search" class="mb-2 text-sm font-medium text-zinc-900 sr-only dark:text-white"
 		>Search</label
 	>
-	<div class="relative">
+	<div class="relative flex-grow">
 		<div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
 			<svg
 				class="w-4 h-4 text-zinc-500 dark:text-zinc-400"
@@ -43,6 +63,7 @@
 				/>
 			</svg>
 		</div>
+		<!-- Search Input -->
 		<input
 			type="search"
 			id="default-search"
@@ -53,8 +74,26 @@
 			on:input={UpdateAppFilter}
 		/>
 	</div>
+	<!-- Add App Button -->
+	<button
+		type="button"
+		class="ml-2 p-4 bg-blue-500 hover:bg-blue-600 active:bg-blue text-white rounded-lg flex items-center justify-center"
+		on:click={openOverlay}
+	>
+		<svg
+			class="w-4 h-4"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			viewBox="0 0 24 24"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+		</svg>
+	</button>
 </form>
 
+<!-- Apps -->
 <main class=" m-5 p-5 flex justify-center">
 	<!-- Item Grid -->
 	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -67,4 +106,5 @@
 	</div>
 </main>
 
+<!-- All Needed Styles that aren't in Tailwind go here -->
 <style lang="postcss"></style>

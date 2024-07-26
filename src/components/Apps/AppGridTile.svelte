@@ -24,7 +24,7 @@
 
 		<!-- Button (Price) -->
 		<button
-			class="action select-none border-none outline-none shadow-md text-white uppercase font-semibold text-xs py-3 px-6 bg-blue-500 rounded-md"
+			class="action select-none border-none outline-none shadow-md text-white uppercase font-semibold text-xs py-3 px-6 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 rounded-md"
 			>{app.price === 0 ? 'Free' : `$${app.price}`}</button
 		>
 	</div>

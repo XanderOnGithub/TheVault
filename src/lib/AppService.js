@@ -1,8 +1,7 @@
-import fs from 'fs';
-import path from 'path';
-
 // JSON File path (Temporary, will need to be changed for scale)
 const filePath = ('src/lib/apps.json');
+
+let loadedApps = [];
 
 // Function to load apps from a JSON file
 function loadApps() {
@@ -15,18 +14,25 @@ function loadApps() {
         })
         .then(data => {
             const apps = data.apps;
+            loadedApps = apps;
             return apps;
         })
         .catch(error => {
             console.error('There was a problem with your fetch operation:', error);
-            return [];
+
         });
 }
 
 // Function to write a new app to the JSON file if it's unique
 async function addApp(newApp) {
     try {
+        newApp.id = loadedApps.length + 1;
         const apps = await loadApps();
+
+        // Ensure apps is an array
+        if (!Array.isArray(apps)) {
+            throw new TypeError('Loaded apps is not an array');
+        }
 
         // Check if the app is unique based on a unique identifier (e.g., id or name)
         const isUnique = !apps.some(app => app.id === newApp.id || app.name === newApp.name);
@@ -35,14 +41,11 @@ async function addApp(newApp) {
         }
 
         // Add the new app to the list
-        apps.push(newApp);
+        loadedApps.push(newApp);
 
-        // Write the updated list back to the JSON file
-        fs.writeFileSync(filePath, JSON.stringify({ apps }, null, 2), 'utf8');
-        return newApp;
+
     } catch (error) {
-        console.error('There was a problem with adding the app:', error);
-        throw error;
+        console.error('There was a problem adding the app:', error);
     }
 }
 
@@ -55,4 +58,4 @@ function filterApps(apps, filter) {
 
 
 // Export the function
-export { loadApps, addApp, filterApps };
+export { loadApps, addApp, filterApps, loadedApps };
