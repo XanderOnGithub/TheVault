@@ -1,110 +1,110 @@
 <script>
-	import AppGridTile from '../components/Apps/AppGridTile.svelte';
-	import AppAddOverlay from '../components/Apps/AppAddOverlay.svelte';
-	import { filterApps, loadApps, loadedApps } from '../lib/AppService.js';
-	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 
-	let apps = [];
-	let targetApps = [];
-	let search = '';
+	const handleLoginRedirect = () => {
+		goto('/auth?mode=login');
+	};
 
-	let isOverlayOpen = false;
-
-	function openOverlay() {
-		isOverlayOpen = true;
-	}
-
-	function closeOverlay() {
-		isOverlayOpen = false;
-	}
-
-	async function loadAppGrid() {
-		await loadApps();
-		apps = loadedApps;
-		targetApps = apps;
-	}
-
-	async function refreshApps() {
-		apps = loadedApps;
-		targetApps = apps;
-		search = '';
-	}
-
-	onMount(loadAppGrid);
-
-	function UpdateAppFilter() {
-		targetApps = filterApps(apps, search);
-	}
+	const handleRegisterRedirect = () => {
+		goto('/auth?mode=register');
+	};
 </script>
 
-<AppAddOverlay {isOverlayOpen} onClose={closeOverlay} on:appAdded={refreshApps} />
-
-<!-- Search bar -->
-<form class="max-w-md mx-auto py-5 flex items-center">
-	<label for="default-search" class="mb-2 text-sm font-medium text-zinc-900 sr-only dark:text-white"
-		>Search</label
-	>
-	<div class="relative flex-grow">
-		<div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-			<svg
-				class="w-4 h-4 text-zinc-500 dark:text-zinc-400"
-				aria-hidden="true"
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 20 20"
-			>
-				<path
-					stroke="currentColor"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-				/>
-			</svg>
-		</div>
-		<!-- Search Input -->
-		<input
-			type="search"
-			id="default-search"
-			class="block w-full p-4 ps-10 text-sm text-zinc-900 border border-zinc-300 rounded-lg bg-zinc-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-			placeholder="Search apps..."
-			autocomplete="off"
-			bind:value={search}
-			on:input={UpdateAppFilter}
-		/>
-	</div>
-	<!-- Add App Button -->
-	<button
-		type="button"
-		class="ml-2 p-4 bg-blue-500 hover:bg-blue-600 active:bg-blue text-white rounded-lg flex items-center justify-center"
-		on:click={openOverlay}
-	>
-		<svg
-			class="w-4 h-4"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2"
-			viewBox="0 0 24 24"
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
-		</svg>
-	</button>
-</form>
-
-<!-- Apps -->
-<main class=" m-5 p-5 flex justify-center">
-	<!-- Item Grid -->
-	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-10">
-		{#each targetApps as app (app.id)}
-			<div in:fade={{ duration: 100 }}>
-				<!-- Applying the fade transition -->
-				<AppGridTile {app} />
+<main class="flex flex-col min-h-screen bg-gray-50">
+	<!-- Navbar -->
+	<nav class="bg-white shadow-md">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<div class="flex justify-between h-16">
+				<div class="flex">
+					<div class="flex-shrink-0 flex items-center">
+						<a href="/" class="text-2xl font-bold text-gray-900">The Vault</a>
+					</div>
+				</div>
+				<div class="flex items-center space-x-4">
+					<button class="btn btn-primary" on:click={handleLoginRedirect}>Login</button>
+					<button class="btn btn-secondary" on:click={handleRegisterRedirect}>Register</button>
+				</div>
 			</div>
-		{/each}
-	</div>
-</main>
+		</div>
+	</nav>
 
-<!-- All Needed Styles that aren't in Tailwind go here -->
-<style lang="postcss"></style>
+	<!-- Hero Section -->
+	<section class="relative flex items-center justify-center flex-grow">
+		<div class="absolute inset-0 bg-blue-900 opacity-50"></div>
+		<div class="relative z-10 max-w-2xl text-center text-white p-8">
+			<h1 class="text-5xl font-extrabold mb-4">Welcome to The Vault</h1>
+			<p class="text-lg mb-6">Your ultimate multi-platform app repository</p>
+			<div class="flex justify-center space-x-4">
+				<button class="btn px-10 btn-secondary" on:click={handleRegisterRedirect}>Join Now</button>
+			</div>
+		</div>
+	</section>
+
+	<!-- Features Section -->
+	<section class="py-12 bg-white">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<h2 class="text-3xl font-extrabold text-gray-900 text-center mb-8">Features</h2>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+				<div class="text-center">
+					<div class="text-blue-600 mb-4">
+						<!-- Replace with an appropriate icon -->
+						<i class="fas fa-cogs fa-3x"></i>
+					</div>
+					<h3 class="text-xl font-bold mb-2">Multi-Platform</h3>
+					<p class="text-gray-600">View applications made for any platform</p>
+				</div>
+				<div class="text-center">
+					<div class="text-blue-600 mb-4">
+						<!-- Replace with an appropriate icon -->
+						<i class="fas fa-shield-alt fa-3x"></i>
+					</div>
+					<h3 class="text-xl font-bold mb-2">Review</h3>
+					<p class="text-gray-600">Add or read reviews to find your perfect app</p>
+				</div>
+				<div class="text-center">
+					<div class="text-blue-600 mb-4">
+						<!-- Replace with an appropriate icon -->
+						<i class="fas fa-users fa-3x"></i>
+					</div>
+					<h3 class="text-xl font-bold mb-2">Add your own app</h3>
+					<p class="text-gray-600">Request to add your own app to The Vault.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Testimonials Section -->
+	<section class="py-12 bg-gray-50">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<h2 class="text-3xl font-extrabold text-gray-900 text-center mb-8">Testimonials</h2>
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+				<div class="bg-white p-6 rounded-lg shadow-md">
+					<p class="text-gray-600 mb-4">
+						"The Vault has transformed the way we manage our apps. It's an indispensable tool for
+						our team."
+					</p>
+					<p class="text-gray-900 font-bold">- Bill Gates, Famous Rich Dude</p>
+				</div>
+				<div class="bg-white p-6 rounded-lg shadow-md">
+					<p class="text-gray-600 mb-4">
+						"A fantastic repository with an intuitive interface. Highly recommend it to anyone."
+					</p>
+					<p class="text-gray-900 font-bold">- Xander Reyes, The dev of The Vault</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Footer -->
+	<footer class="bg-white py-6">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<div class="flex justify-between items-center">
+				<p class="text-gray-600">&copy; 2023 The Vault. All rights reserved.</p>
+				<div class="flex space-x-4">
+					<a href="/" class="text-gray-600 hover:text-gray-900">Privacy Policy</a>
+					<a href="/" class="text-gray-600 hover:text-gray-900">Terms of Service</a>
+				</div>
+			</div>
+		</div>
+	</footer>
+</main>
