@@ -6,14 +6,14 @@
 	export let required = false;
 </script>
 
-<div class="rounded-md shadow-sm my-5">
+<div class="my-5">
 	<label for={id} class="sr-only">{placeholder}</label>
 	{#if type === 'email'}
 		<input
 			type="email"
 			{id}
 			bind:value
-			class="input input-bordered w-full mt-2"
+			class="input input-bordered rounded-md px-3 py-2 w-full bg-transparent border border-gray-300 dark:text-white"
 			{placeholder}
 			{required}
 		/>
@@ -22,7 +22,7 @@
 			type="password"
 			{id}
 			bind:value
-			class="input input-bordered w-full mt-2"
+			class="input input-bordered rounded-md px-3 py-2 w-full bg-transparent border border-gray-300 dark:text-white"
 			{placeholder}
 			{required}
 		/>
@@ -31,7 +31,7 @@
 			type="text"
 			{id}
 			bind:value
-			class="input input-bordered w-full mt-2"
+			class="input input-bordered rounded-md px-3 py-2 w-full bg-transparent border border-gray-300 dark:text-white"
 			{placeholder}
 			{required}
 		/>

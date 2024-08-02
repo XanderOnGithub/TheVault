@@ -62,9 +62,7 @@
 
 <main class="flex flex-col min-h-screen bg-white dark:bg-black text-black dark:text-white">
 	<div class="flex items-center justify-center flex-grow">
-		<div
-			class="max-w-md w-full space-y-12 p-10 py-20 rounded-md shadow-lg z-10 border border-white"
-		>
+		<div class="max-w-md w-full space-y-12 p-10 py-20 rounded-md z-10">
 			<h1 class="text-center text-3xl font-extrabold">
 				{titles[$mode]}
 			</h1>
