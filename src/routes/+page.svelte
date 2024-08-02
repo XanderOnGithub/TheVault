@@ -1,5 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import ThemeToggle from '../components/themeToggle.svelte';
 
 	const handleLoginRedirect = () => {
 		goto('/auth?mode=login');
@@ -8,103 +10,102 @@
 	const handleRegisterRedirect = () => {
 		goto('/auth?mode=register');
 	};
+
+	// On mount (Page Load)
+	onMount(() => {
+		// Update the date and time every minute
+		setInterval(updateDateTime, 30000);
+
+		// Initial call to display the date and time immediately
+		updateDateTime();
+	});
+
+	// Format the date and time as MM/DD/YYYY HH:MM
+	function formatDateTime(date) {
+		const month = date.getMonth() + 1;
+		const day = date.getDate();
+		const year = date.getFullYear();
+		const hours = String(date.getHours()).padStart(2, '0');
+		const minutes = String(date.getMinutes()).padStart(2, '0');
+		return `${month}/${day}/${year} ${hours}:${minutes}`;
+	}
+
+	// Update the date and time in the navbar
+	function updateDateTime() {
+		const now = new Date();
+		document.getElementById('date-time').textContent = formatDateTime(now);
+	}
 </script>
 
-<main class="flex flex-col min-h-screen bg-gray-50">
+<main class="flex flex-col min-h-screen bg-white dark:bg-black text-black dark:text-white">
 	<!-- Navbar -->
-	<nav class="bg-white shadow-md">
+	<nav class="shadow-md relative border-b border-black dark:border-white">
+		<!-- Navbar Container -->
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-			<div class="flex justify-between h-16">
-				<div class="flex">
-					<div class="flex-shrink-0 flex items-center">
-						<a href="/" class="text-2xl font-bold text-gray-900">The Vault</a>
-					</div>
+			<!-- Navbar Content -->
+			<div class="flex justify-between items-center h-16 relative">
+				<!-- Date and Time -->
+				<div class="flex items-center space-x-4 lg:-mx-20">
+					<p class="mono text-gray-400" id="date-time">8/1/2024 22:00</p>
 				</div>
-				<div class="flex items-center space-x-4">
-					<button class="btn btn-primary" on:click={handleLoginRedirect}>Login</button>
-					<button class="btn btn-secondary" on:click={handleRegisterRedirect}>Register</button>
+
+				<!-- Logo -->
+				<div class="absolute left-1/2 transform -translate-x-1/2">
+					<a href="/" class="text-2xl font-bold">THE VAULT</a>
+				</div>
+
+				<!-- Buttons -->
+				<div class="flex items-center space-x-6 ml-auto lg:-mx-20">
+					<button
+						class="mono text-gray-400 hover:text-black dark:hover:text-white hover:drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+						on:click={handleLoginRedirect}>Login</button
+					>
+					<button
+						class="mono text-gray-400 hover:text-black dark:hover:text-white hover:drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+						on:click={handleRegisterRedirect}>Register</button
+					>
 				</div>
 			</div>
 		</div>
 	</nav>
 
 	<!-- Hero Section -->
-	<section class="relative flex items-center justify-center flex-grow">
-		<div class="absolute inset-0 bg-blue-900 opacity-50"></div>
-		<div class="relative z-10 max-w-2xl text-center text-white p-8">
-			<h1 class="text-5xl font-extrabold mb-4">Welcome to The Vault</h1>
-			<p class="text-lg mb-6">Your ultimate multi-platform app repository</p>
-			<div class="flex justify-center space-x-4">
-				<button class="btn px-10 btn-secondary" on:click={handleRegisterRedirect}>Join Now</button>
-			</div>
-		</div>
-	</section>
+	<section
+		class="relative flex items-center justify-center md:justify-start flex-grow px:0 md:px-5 lg:px-10"
+	>
+		<div class="absolute inset-0 opacity-50"></div>
+		<div class="relative z-10 max-w-2xl text-center md:text-left text-black dark:text-white p-8">
+			<h1 class="text-6xl font-extrabold mb-4">ENTER THE VAULT</h1>
+			<p class="text-lg mb-6 text-gray-400">
+				Your Ultimate Repository for Apps - Discover, Download, and Share the Best Apps for Every
+				Platform, All for Free
+			</p>
 
-	<!-- Features Section -->
-	<section class="py-12 bg-white">
-		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-			<h2 class="text-3xl font-extrabold text-gray-900 text-center mb-8">Features</h2>
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-				<div class="text-center">
-					<div class="text-blue-600 mb-4">
-						<!-- Replace with an appropriate icon -->
-						<i class="fas fa-cogs fa-3x"></i>
-					</div>
-					<h3 class="text-xl font-bold mb-2">Multi-Platform</h3>
-					<p class="text-gray-600">View applications made for any platform</p>
-				</div>
-				<div class="text-center">
-					<div class="text-blue-600 mb-4">
-						<!-- Replace with an appropriate icon -->
-						<i class="fas fa-shield-alt fa-3x"></i>
-					</div>
-					<h3 class="text-xl font-bold mb-2">Review</h3>
-					<p class="text-gray-600">Add or read reviews to find your perfect app</p>
-				</div>
-				<div class="text-center">
-					<div class="text-blue-600 mb-4">
-						<!-- Replace with an appropriate icon -->
-						<i class="fas fa-users fa-3x"></i>
-					</div>
-					<h3 class="text-xl font-bold mb-2">Add your own app</h3>
-					<p class="text-gray-600">Request to add your own app to The Vault.</p>
-				</div>
-			</div>
-		</div>
-	</section>
+			<p class="mb-6 text-gray-400 responsive-line"></p>
 
-	<!-- Testimonials Section -->
-	<section class="py-12 bg-gray-50">
-		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-			<h2 class="text-3xl font-extrabold text-gray-900 text-center mb-8">Testimonials</h2>
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-				<div class="bg-white p-6 rounded-lg shadow-md">
-					<p class="text-gray-600 mb-4">
-						"The Vault has transformed the way we manage our apps. It's an indispensable tool for
-						our team."
-					</p>
-					<p class="text-gray-900 font-bold">- Bill Gates, Famous Rich Dude</p>
-				</div>
-				<div class="bg-white p-6 rounded-lg shadow-md">
-					<p class="text-gray-600 mb-4">
-						"A fantastic repository with an intuitive interface. Highly recommend it to anyone."
-					</p>
-					<p class="text-gray-900 font-bold">- Xander Reyes, The dev of The Vault</p>
-				</div>
-			</div>
+			<button
+				class="mono text-xl hover:text-black dark:hover:text-white hover:drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+				on:click={handleRegisterRedirect}>Join Now</button
+			>
 		</div>
 	</section>
 
 	<!-- Footer -->
-	<footer class="bg-white py-6">
-		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-			<div class="flex justify-between items-center">
-				<p class="text-gray-600">&copy; 2023 The Vault. All rights reserved.</p>
-				<div class="flex space-x-4">
-					<a href="/" class="text-gray-600 hover:text-gray-900">Privacy Policy</a>
-					<a href="/" class="text-gray-600 hover:text-gray-900">Terms of Service</a>
-				</div>
-			</div>
-		</div>
+	<footer
+		class="py-6 border-t border-dashed border-black dark:border-white flex justify-between px-5"
+	>
+		<p class="text-center text-gray-400">
+			&copy; {new Date().getFullYear()} The Vault. All rights reserved.
+		</p>
+
+		<ThemeToggle />
 	</footer>
 </main>
+
+<style>
+	.responsive-line {
+		border-top: 2px dashed gray;
+		width: 100%;
+		margin: 1rem 0;
+	}
+</style>

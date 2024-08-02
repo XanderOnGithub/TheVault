@@ -52,7 +52,6 @@
 			<option value="">All Tags</option>
 			<option value="tag1">Tag 1</option>
 			<option value="tag2">Tag 2</option>
-			<!-- Add more tags as needed -->
 		</select>
 	</div>
 
