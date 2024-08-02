@@ -51,23 +51,19 @@
 					<p class="text-sm md:text-base mono text-gray-400" id="date-time">8/1/2024 22:00</p>
 				</div>
 
-				<!-- Login Button -->
-				<div class="flex items-center space-x-6 sm:order-1 z-12">
+				<!-- Logo -->
+				<div class="absolute left-1/2 transform -translate-x-1/2">
+					<a href="/" class="text-xl md:text-2xl font-bold">THE VAULT</a>
+				</div>
+
+				<!-- Buttons -->
+				<div
+					class="hidden sm:flex items-center space-x-6 sm:space-x-reverse sm:flex-row-reverse ml-auto sm:ml-0"
+				>
 					<button
 						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 						on:click={handleLoginRedirect}>Login</button
 					>
-				</div>
-
-				<!-- Logo -->
-				<div
-					class="absolute left-1/2 transform -translate-x-1/2 sm:static sm:transform-none sm:order-2"
-				>
-					<a href="/" class="text-xl md:text-2xl font-bold">THE VAULT</a>
-				</div>
-
-				<!-- Register Button -->
-				<div class="flex items-center space-x-6 ml-auto sm:ml-0 sm:order-3 z-12">
 					<button
 						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 						on:click={handleRegisterRedirect}>Register</button
@@ -92,7 +88,7 @@
 
 			<button
 				class="mono text-xl text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
-				on:click={handleRegisterRedirect}>Join Now</button
+				on:click={handleLoginRedirect}>Enter Now</button
 			>
 		</div>
 		<div class="absolute xl:relative max-w-2xl p-20 opacity-5 xl:opacity-75 flex justify-center">
