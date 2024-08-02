@@ -41,7 +41,7 @@
 	class="flex flex-col min-h-screen overflow-x-hidden bg-white dark:bg-black text-black dark:text-white"
 >
 	<!-- Navbar -->
-	<nav class="shadow-md relative border-b border-black dark:border-white w-full">
+	<nav class="relative border-b border-black dark:border-white w-full">
 		<!-- Navbar Container -->
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 			<!-- Navbar Content -->
@@ -59,11 +59,11 @@
 				<!-- Buttons -->
 				<div class="flex items-center space-x-6 ml-auto">
 					<button
-						class="mono text-gray-400 hover:text-black dark:hover:text-white hover:drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+						class="mono text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 						on:click={handleLoginRedirect}>Login</button
 					>
 					<button
-						class="mono text-gray-400 hover:text-black dark:hover:text-white hover:drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+						class="mono text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 						on:click={handleRegisterRedirect}>Register</button
 					>
 				</div>
@@ -85,7 +85,7 @@
 			<p class="mb-6 text-gray-400 responsive-line"></p>
 
 			<button
-				class="mono text-xl hover:text-black dark:hover:text-white hover:drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+				class="mono text-xl text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 				on:click={handleRegisterRedirect}>Join Now</button
 			>
 		</div>

@@ -1,11 +1,18 @@
 <script>
 	import { onMount } from 'svelte';
 
-	let isDarkMode = false;
+	let isDarkMode = true;
 
 	onMount(() => {
 		// Check the initial theme preference
-		isDarkMode = localStorage.getItem('theme') === 'dark';
+		const storedTheme = localStorage.getItem('theme');
+		if (storedTheme) {
+			isDarkMode = storedTheme === 'dark';
+		} else {
+			// Default to dark mode if no preference is found
+			isDarkMode = true;
+			localStorage.setItem('theme', 'dark');
+		}
 		updateTheme();
 	});
 
