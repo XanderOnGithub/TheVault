@@ -71,6 +71,10 @@
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 			<!-- Navbar Content -->
 			<div class="flex justify-between items-center h-16 relative w-full">
+				<!-- Back Button -->
+				<div class="absolute left-0">
+					<a href="/" class="text-xl md:text-2xl font-bold">&LeftArrow;</a>
+				</div>
 				<!-- Logo -->
 				<div class="absolute left-1/2 transform -translate-x-1/2">
 					<a href="/" class="text-xl md:text-2xl font-bold">THE VAULT</a>

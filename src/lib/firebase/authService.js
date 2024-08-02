@@ -45,16 +45,19 @@ export const register = async (email, password) => {
 };
 
 export const setUsername = async (username) => {
-    const currentUser = auth.currentUser; // Ensure we get the current user from auth
+    const currentUser = auth.currentUser;
     try {
         if (!currentUser) {
             throw new Error('No authenticated user');
         }
-        const isUnique = await isUsernameUnique(username);
+
+        // Check uniqueness in lowercase
+        const isUnique = await isUsernameUnique(username.toLowerCase());
         if (!isUnique) {
             throw new Error('Username is already taken');
         }
 
+        // Use the original case for setting the username
         await updateProfile(currentUser, { displayName: username });
         await saveUsername(currentUser.uid, username);
         user.set({ ...currentUser, displayName: username });
