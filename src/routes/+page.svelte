@@ -37,15 +37,17 @@
 	}
 </script>
 
-<main class="flex flex-col min-h-screen bg-white dark:bg-black text-black dark:text-white">
+<main
+	class="flex flex-col min-h-screen overflow-x-hidden bg-white dark:bg-black text-black dark:text-white"
+>
 	<!-- Navbar -->
-	<nav class="shadow-md relative border-b border-black dark:border-white">
+	<nav class="shadow-md relative border-b border-black dark:border-white w-full">
 		<!-- Navbar Container -->
-		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 			<!-- Navbar Content -->
-			<div class="flex justify-between items-center h-16 relative">
+			<div class="flex justify-between items-center h-16 relative w-full">
 				<!-- Date and Time -->
-				<div class="flex items-center space-x-4 lg:-mx-20">
+				<div class="flex items-center space-x-4">
 					<p class="mono text-gray-400" id="date-time">8/1/2024 22:00</p>
 				</div>
 
@@ -55,7 +57,7 @@
 				</div>
 
 				<!-- Buttons -->
-				<div class="flex items-center space-x-6 ml-auto lg:-mx-20">
+				<div class="flex items-center space-x-6 ml-auto">
 					<button
 						class="mono text-gray-400 hover:text-black dark:hover:text-white hover:drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 						on:click={handleLoginRedirect}>Login</button
@@ -68,13 +70,12 @@
 			</div>
 		</div>
 	</nav>
-
 	<!-- Hero Section -->
 	<section
-		class="relative flex items-center justify-center md:justify-start flex-grow px:0 md:px-5 lg:px-10"
+		class="relative flex items-center justify-center xl:justify-between flex-grow px:0 lg:px-5 xl:px-10"
 	>
 		<div class="absolute inset-0 opacity-50"></div>
-		<div class="relative z-10 max-w-2xl text-center md:text-left text-black dark:text-white p-8">
+		<div class="relative z-10 max-w-2xl text-center xl:text-left text-black dark:text-white p-8">
 			<h1 class="text-6xl font-extrabold mb-4">ENTER THE VAULT</h1>
 			<p class="text-lg mb-6 text-gray-400">
 				Your Ultimate Repository for Apps - Discover, Download, and Share the Best Apps for Every
@@ -88,11 +89,14 @@
 				on:click={handleRegisterRedirect}>Join Now</button
 			>
 		</div>
+		<div class="absolute xl:relative z-10 max-w-2xl p-20 opacity-5 xl:opacity-25">
+			<img src="vault.svg" alt="Vault Logo" class="w-128 h-128 vault" />
+		</div>
 	</section>
 
 	<!-- Footer -->
 	<footer
-		class="py-6 border-t border-dashed border-black dark:border-white flex justify-between px-5"
+		class=" py-6 border-t border-dashed bg-white dark:bg-black border-black dark:border-white flex justify-between px-5"
 	>
 		<p class="text-center text-gray-400">
 			☻ {new Date().getFullYear()} The Vault. No rights reserved.
@@ -107,5 +111,20 @@
 		border-top: 2px dashed gray;
 		width: 100%;
 		margin: 1rem 0;
+	}
+
+	.vault {
+		width: 600px;
+		animation: spin 15s linear infinite;
+		overflow-x: hidden;
+	}
+
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>

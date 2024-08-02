@@ -74,13 +74,4 @@
 	input:checked + .slider:before {
 		transform: translateX(26px);
 	}
-
-	/* Dark mode styles */
-	.dark .slider {
-		background-color: #555;
-	}
-
-	.dark input:checked + .slider {
-		background-color: #f1c40f;
-	}
 </style>
