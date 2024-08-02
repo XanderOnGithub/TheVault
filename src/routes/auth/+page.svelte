@@ -38,8 +38,12 @@
 					if (newUser) mode.set('add-username'); // Switch to add-username mode if registration is successful
 					break;
 				case 'add-username':
-					await setUsername(username); // Set username
-					goto('/apps'); // Redirect to apps page
+					try {
+						await setUsername(username); // Set username
+						goto('/apps'); // Redirect to apps page
+					} catch (error) {
+						errorMessage.set(error.message); // Set error message if any error occurs
+					}
 					break;
 			}
 		} catch (error) {

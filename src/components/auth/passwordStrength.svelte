@@ -49,9 +49,9 @@
 	<div class="mt-2 loot">
 		<div class="flex items-center justify-between">
 			<span class="pe-5">{message}</span>
-			<div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+			<div class="w-full bg-white dark:bg-black border border-gray-300 rounded-full h-2.5">
 				<div
-					class="h-2.5 rounded-full bar"
+					class="h-full rounded-full bar"
 					style="width: {strength * 20}%; background-color: {color}; box-shadow: {glow};"
 				></div>
 			</div>
