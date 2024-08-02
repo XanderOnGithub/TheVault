@@ -48,22 +48,22 @@
 			<div class="flex justify-between items-center h-16 relative w-full">
 				<!-- Date and Time -->
 				<div class="flex items-center space-x-4">
-					<p class="mono text-gray-400" id="date-time">8/1/2024 22:00</p>
+					<p class="text-sm md:text-base mono text-gray-400" id="date-time">8/1/2024 22:00</p>
 				</div>
 
 				<!-- Logo -->
 				<div class="absolute left-1/2 transform -translate-x-1/2">
-					<a href="/" class="text-2xl font-bold">THE VAULT</a>
+					<a href="/" class="text-xl md:text-2xl font-bold">THE VAULT</a>
 				</div>
 
 				<!-- Buttons -->
 				<div class="flex items-center space-x-6 ml-auto">
 					<button
-						class="mono text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 						on:click={handleLoginRedirect}>Login</button
 					>
 					<button
-						class="mono text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 						on:click={handleRegisterRedirect}>Register</button
 					>
 				</div>
