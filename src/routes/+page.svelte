@@ -52,7 +52,7 @@
 				</div>
 
 				<!-- Login Button -->
-				<div class="flex items-center space-x-6 sm:hidden">
+				<div class="flex items-center space-x-6 sm:order-1 z-12">
 					<button
 						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 						on:click={handleLoginRedirect}>Login</button
@@ -60,16 +60,14 @@
 				</div>
 
 				<!-- Logo -->
-				<div class="absolute left-1/2 transform -translate-x-1/2">
+				<div
+					class="absolute left-1/2 transform -translate-x-1/2 sm:static sm:transform-none sm:order-2"
+				>
 					<a href="/" class="text-xl md:text-2xl font-bold">THE VAULT</a>
 				</div>
 
 				<!-- Register Button -->
-				<div class="flex items-center space-x-6 ml-auto sm:ml-0">
-					<button
-						class="mono text-sm md:text-base hidden sm:block text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
-						on:click={handleLoginRedirect}>Login</button
-					>
+				<div class="flex items-center space-x-6 ml-auto sm:ml-0 sm:order-3 z-12">
 					<button
 						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 						on:click={handleRegisterRedirect}>Register</button
