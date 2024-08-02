@@ -84,12 +84,12 @@
 	</nav>
 
 	<div class="flex items-center justify-center flex-grow">
-		<div class="max-w-md w-full space-y-12 p-10 py-20 rounded-md z-10">
+		<div class="max-w-md w-full p-10 py-20 rounded-md z-10">
 			<h1 class="text-center text-3xl font-extrabold">
 				{titles[$mode]}
 			</h1>
 
-			<form class="mt-8 space-y-6" on:submit|preventDefault={handleAuth}>
+			<form class="mt-8" on:submit|preventDefault={handleAuth}>
 				{#if $mode === 'login' || $mode === 'register'}
 					<div>
 						<!-- Email & Password Input -->
@@ -115,7 +115,7 @@
 					{/if}
 				{/if}
 				{#if $mode === 'add-username'}
-					<div class="rounded-md shadow-sm -space-y-px">
+					<div class="rounded-md shadow-sm">
 						<div>
 							<label for="username" class="sr-only">Username</label>
 							<AuthInput
@@ -131,7 +131,7 @@
 				{#if $errorMessage}
 					<p class="text-red-500 text-center">{$errorMessage}</p>
 				{/if}
-				<div class="flex justify-center">
+				<div class="flex justify-center pb-12">
 					<button type="submit" class="btn btn-primary w-full">
 						{titles[$mode]}
 					</button>
@@ -142,12 +142,18 @@
 				<div class="flex justify-center">
 					<button
 						type="button"
-						class="btn btn-link"
+						class="pb-3"
 						on:click={() => switchMode($mode === 'login' ? 'register' : 'login')}
 					>
 						{$mode === 'login'
 							? "Don't have an account? Register"
 							: 'Already have an account? Login'}
+					</button>
+				</div>
+
+				<div class="flex justify-center">
+					<button type="button" class="btn btn-link text-gray-300" on:click={() => goto('/apps')}>
+						Continue as guest
 					</button>
 				</div>
 			{/if}
