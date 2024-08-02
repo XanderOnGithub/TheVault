@@ -95,7 +95,7 @@
 		class="py-6 border-t border-dashed border-black dark:border-white flex justify-between px-5"
 	>
 		<p class="text-center text-gray-400">
-			&copy; {new Date().getFullYear()} The Vault. All rights reserved.
+			☻ {new Date().getFullYear()} The Vault. No rights reserved.
 		</p>
 
 		<ThemeToggle />
