@@ -61,6 +61,20 @@
 </script>
 
 <main class="flex flex-col min-h-screen bg-white dark:bg-black text-black dark:text-white">
+	<!-- Navbar -->
+	<nav class="relative border-b border-black dark:border-white w-full">
+		<!-- Navbar Container -->
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+			<!-- Navbar Content -->
+			<div class="flex justify-between items-center h-16 relative w-full">
+				<!-- Logo -->
+				<div class="absolute left-1/2 transform -translate-x-1/2">
+					<a href="/" class="text-xl md:text-2xl font-bold">THE VAULT</a>
+				</div>
+			</div>
+		</div>
+	</nav>
+
 	<div class="flex items-center justify-center flex-grow">
 		<div class="max-w-md w-full space-y-12 p-10 py-20 rounded-md z-10">
 			<h1 class="text-center text-3xl font-extrabold">
