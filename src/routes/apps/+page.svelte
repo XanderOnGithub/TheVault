@@ -6,7 +6,7 @@
 	import AppList from '../../components/apps/AppList.svelte';
 	import NewAppModal from '../../components/apps/NewAppModal.svelte';
 	import AppNav from '../../components/apps/AppNav.svelte';
-	import ThemeToggle from '../../components/ThemeToggle.svelte';
+	import ThemeToggle from '../../components/themeToggle.svelte';
 
 	let searchQuery = '';
 	let selectedTag = '';
