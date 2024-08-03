@@ -6,6 +6,7 @@
 	import { writable, derived } from 'svelte/store';
 	import { fetchApps } from '$lib/firebase/firestoreService';
 	import ThemeToggle from '../../components/ThemeToggle.svelte';
+	``;
 
 	let searchQuery = '';
 	let selectedTag = '';
@@ -78,5 +79,6 @@
 		☻ {new Date().getFullYear()} The Vault. No rights reserved.
 	</p>
 
+	<!-- Theme Toggler -->
 	<ThemeToggle />
 </footer>
