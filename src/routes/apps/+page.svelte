@@ -5,7 +5,7 @@
 	import AppNav from '../../components/apps/AppNav.svelte';
 	import { writable, derived } from 'svelte/store';
 	import { fetchApps } from '$lib/firebase/firestoreService';
-	import ThemeToggle from '../../components/ThemeToggle.svelte';
+	import ThemeToggle from '../../components/themeToggle.svelte';
 
 	let searchQuery = '';
 	let selectedTag = '';
