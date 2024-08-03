@@ -1,7 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
 	import DateTimeText from '../components/dateTimeText.svelte';
-	import ThemeToggle from '../components/ThemeToggle.svelte';
 
 	const handleLoginRedirect = () => {
 		goto('/auth?mode=login');
@@ -136,8 +135,6 @@
 		<p class="text-center text-gray-400">
 			☻ {new Date().getFullYear()} The Vault. No rights reserved.
 		</p>
-
-		<ThemeToggle />
 	</footer>
 </main>
 
