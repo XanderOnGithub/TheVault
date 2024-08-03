@@ -1,10 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
+	import { writable, derived } from 'svelte/store';
+	import { fetchApps } from '$lib/firebase/firestoreService';
+
 	import AppList from '../../components/apps/AppList.svelte';
 	import NewAppModal from '../../components/apps/NewAppModal.svelte';
 	import AppNav from '../../components/apps/AppNav.svelte';
-	import { writable, derived } from 'svelte/store';
-	import { fetchApps } from '$lib/firebase/firestoreService';
+	import ThemeToggle from '../../components/ThemeToggle.svelte';
 
 	let searchQuery = '';
 	let selectedTag = '';
@@ -76,4 +78,5 @@
 	<p class="text-center text-gray-400">
 		☻ {new Date().getFullYear()} The Vault. No rights reserved.
 	</p>
+	<ThemeToggle />
 </footer>
