@@ -66,3 +66,11 @@ export const setUsername = async (username) => {
         throw error;
     }
 };
+
+export const isLoggedIn = () => {
+    let loggedIn = false;
+    user.subscribe(currentUser => {
+        loggedIn = !!currentUser;
+    })();
+    return loggedIn;
+};

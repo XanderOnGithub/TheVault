@@ -1,23 +1,55 @@
 <script>
-	import { logout } from '$lib/firebase/authService';
+	import { onMount } from 'svelte';
+	import { isLoggedIn, logout } from '$lib/firebase/authService';
 	import { goto } from '$app/navigation';
+	import DateTimeText from '../dateTimeText.svelte';
 
-	const handleLogout = async () => {
-		const confirmed = confirm('Are you sure you want to log out?');
-		if (confirmed) {
-			await logout();
-			goto('/');
-		}
-	};
+	let userLoggedIn = false;
+
+	onMount(() => {
+		userLoggedIn = isLoggedIn();
+	});
+
+	function handleLogout() {
+		logout();
+		goto('/');
+	}
 </script>
 
-<nav class="navbar bg-base-200 shadow-md mb-4 px-5 py-2">
-	<div class="flex-1">
-		<h1 class="font-bold text-xl">The Vault</h1>
-	</div>
-	<div class="flex-none">
-		<button class="btn btn-outline btn-error" on:click={handleLogout} aria-label="Logout">
-			Logout
-		</button>
+<nav
+	class="bg-white dark:bg-black text-black dark:text-white relative border-b border-black dark:border-white w-full"
+>
+	<!-- Navbar Container -->
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+		<!-- Navbar Content -->
+		<div class="flex justify-between items-center h-16 relative w-full">
+			<!-- Date and Time -->
+			<div class="items-center space-x-4 hidden sm:flex">
+				<DateTimeText />
+			</div>
+
+			<!-- Logo -->
+			<div class="absolute left-1/2 transform -translate-x-1/2">
+				<a href="/" class="text-xl md:text-2xl font-bold">THE VAULT</a>
+			</div>
+
+			<!-- Buttons -->
+			<div
+				class="flex items-center space-x-6 sm:space-x-reverse sm:flex-row-reverse ml-auto sm:ml-0"
+			>
+				{#if userLoggedIn}
+					<button
+						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+						on:click={handleLogout}>Logout</button
+					>
+				{:else}
+					<a
+						href="/auth"
+						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+						>Join Now</a
+					>
+				{/if}
+			</div>
+		</div>
 	</div>
 </nav>

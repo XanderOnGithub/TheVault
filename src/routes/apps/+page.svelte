@@ -5,6 +5,7 @@
 	import AppNav from '../../components/apps/AppNav.svelte';
 	import { writable, derived } from 'svelte/store';
 	import { fetchApps } from '$lib/firebase/firestoreService';
+	import ThemeToggle from '../../components/ThemeToggle.svelte';
 
 	let searchQuery = '';
 	let selectedTag = '';
@@ -40,7 +41,7 @@
 </script>
 
 <AppNav />
-<main class="p-8">
+<main class="p-8 bg-white dark:bg-black text-black dark:text-white min-h-screen">
 	<div class="flex mb-4">
 		<input
 			type="text"
@@ -69,3 +70,13 @@
 		<NewAppModal on:close={() => showModal.set(false)} on:appadded={handleAppAdded} />
 	{/if}
 </main>
+
+<footer
+	class=" py-6 border-t border-dashed bg-white dark:bg-black border-black dark:border-white flex justify-between px-5"
+>
+	<p class="text-center text-gray-400">
+		☻ {new Date().getFullYear()} The Vault. No rights reserved.
+	</p>
+
+	<ThemeToggle />
+</footer>

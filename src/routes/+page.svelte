@@ -1,7 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
-	import ThemeToggle from '../components/themeToggle.svelte';
+	import DateTimeText from '../components/dateTimeText.svelte';
+	import ThemeToggle from '../components/ThemeToggle.svelte';
 
 	const handleLoginRedirect = () => {
 		goto('/auth?mode=login');
@@ -10,31 +10,6 @@
 	const handleRegisterRedirect = () => {
 		goto('/auth?mode=register');
 	};
-
-	// On mount (Page Load)
-	onMount(() => {
-		// Update the date and time every minute
-		setInterval(updateDateTime, 30000);
-
-		// Initial call to display the date and time immediately
-		updateDateTime();
-	});
-
-	// Format the date and time as MM/DD/YYYY HH:MM
-	function formatDateTime(date) {
-		const month = date.getMonth() + 1;
-		const day = date.getDate();
-		const year = date.getFullYear();
-		const hours = String(date.getHours()).padStart(2, '0');
-		const minutes = String(date.getMinutes()).padStart(2, '0');
-		return `${month}/${day}/${year} ${hours}:${minutes}`;
-	}
-
-	// Update the date and time in the navbar
-	function updateDateTime() {
-		const now = new Date();
-		document.getElementById('date-time').textContent = formatDateTime(now);
-	}
 </script>
 
 <main
@@ -48,7 +23,7 @@
 			<div class="flex justify-between items-center h-16 relative w-full">
 				<!-- Date and Time -->
 				<div class="items-center space-x-4 hidden sm:flex">
-					<p class="text-sm md:text-base mono text-gray-400" id="date-time">8/1/2024 22:00</p>
+					<DateTimeText />
 				</div>
 
 				<!-- Logo -->
