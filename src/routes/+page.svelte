@@ -142,12 +142,6 @@
 </main>
 
 <style>
-	.responsive-line {
-		border-top: 2px dashed gray;
-		width: 100%;
-		margin: 1rem 0;
-	}
-
 	.vault {
 		width: 600px;
 		animation: spin 15s linear infinite;

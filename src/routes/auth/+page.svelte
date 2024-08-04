@@ -152,7 +152,7 @@
 				</div>
 
 				<div class="flex justify-center">
-					<button type="button" class="btn btn-link text-gray-300" on:click={() => goto('/apps')}>
+					<button type="button" class="btn btn-link text-gray-400" on:click={() => goto('/apps')}>
 						Continue as guest
 					</button>
 				</div>
