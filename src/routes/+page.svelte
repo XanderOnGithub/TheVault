@@ -1,8 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 	import DateTimeText from '../components/dateTimeText.svelte';
-	import ThemeToggle from '../components/themeToggle.svelte';
-	import VaultFooter from '../components/VaultFooter.svelte';
+	import VaultFooter from '../components/vaultFooter.svelte';
 
 	const handleLoginRedirect = () => {
 		goto('/auth?mode=login');
