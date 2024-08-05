@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import DateTimeText from '../components/dateTimeText.svelte';
 	import ThemeToggle from '../components/themeToggle.svelte';
+	import VaultFooter from '../components/VaultFooter.svelte';
 
 	const handleLoginRedirect = () => {
 		goto('/auth?mode=login');
@@ -130,15 +131,7 @@
 	</section>
 
 	<!-- Footer -->
-	<footer
-		class=" py-6 border-t border-dashed bg-white dark:bg-black border-black dark:border-white flex justify-between px-5"
-	>
-		<p class="text-center text-gray-400">
-			☻ {new Date().getFullYear()} The Vault. No rights reserved.
-		</p>
-
-		<ThemeToggle />
-	</footer>
+	<VaultFooter />
 </main>
 
 <style>

@@ -5,7 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { writable } from 'svelte/store';
 	import PasswordStrength from '../../components/auth/passwordStrength.svelte';
-	import ThemeToggle from '../../components/themeToggle.svelte';
+	import VaultFooter from '../../components/vaultFooter.svelte';
 	import AuthInput from '../../components/auth/authInput.svelte';
 	import AuthError from '../../components/auth/authError.svelte';
 
@@ -161,13 +161,5 @@
 	</div>
 
 	<!-- Footer -->
-	<footer
-		class="py-6 border-t border-dashed bg-white dark:bg-black border-black dark:border-white flex justify-between px-5"
-	>
-		<p class="text-center text-gray-400">
-			☻ {new Date().getFullYear()} The Vault. No rights reserved.
-		</p>
-
-		<ThemeToggle />
-	</footer>
+	<VaultFooter />
 </main>

@@ -4,7 +4,7 @@
 	import AppList from '../../components/apps/AppList.svelte';
 	import NewAppModal from '../../components/apps/NewAppModal.svelte';
 	import AppNav from '../../components/apps/AppNav.svelte';
-	import ThemeToggle from '../../components/themeToggle.svelte';
+	import VaultFooter from '../../components/vaultFooter.svelte';
 	import { writable, derived } from 'svelte/store';
 	import { fetchApps, fetchTags } from '$lib/firebase/firestoreService';
 
@@ -94,14 +94,5 @@
 	{/if}
 </main>
 
-<!-- Footer with theme toggle and copyright -->
-<footer
-	class="py-6 border-t border-dashed bg-white dark:bg-black border-black dark:border-white flex justify-between px-5"
->
-	<p class="text-center text-gray-400">
-		☻ {new Date().getFullYear()} The Vault. No rights reserved.
-	</p>
-
-	<!-- Theme Toggler -->
-	<ThemeToggle />
-</footer>
+<!-- Footer Component -->
+<VaultFooter />
