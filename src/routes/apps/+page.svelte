@@ -1,7 +1,7 @@
 <script>
 	// Import necessary modules and components
 	import { onMount } from 'svelte';
-	import AppList from '../../components/apps/AppList.svelte';
+	import AppCard from '../../components/apps/AppCard.svelte';
 	import NewAppModal from '../../components/apps/NewAppModal.svelte';
 	import AppNav from '../../components/apps/AppNav.svelte';
 	import VaultFooter from '../../components/vaultFooter.svelte';
@@ -83,7 +83,11 @@
 
 	<!-- Display the list of filtered apps or a message if no apps are found -->
 	{#if $filteredApps.length > 0}
-		<AppList apps={$filteredApps} />
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-6">
+			{#each $filteredApps as app}
+				<AppCard {app} />
+			{/each}
+		</div>
 	{:else}
 		<p>No apps found.</p>
 	{/if}

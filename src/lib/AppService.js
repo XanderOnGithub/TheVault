@@ -57,5 +57,7 @@ function filterApps(apps, filter) {
 }
 
 
+
+
 // Export the function
 export { loadApps, addApp, filterApps, loadedApps };

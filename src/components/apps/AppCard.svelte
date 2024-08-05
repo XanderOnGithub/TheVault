@@ -1,9 +1,15 @@
 <script>
+	import AppModal from './AppModal.svelte';
 	export let app;
 
+	let showModal = false;
+
 	const handleClick = (id) => {
-		// Navigate to the app detail page
-		window.location.href = `/apps/${id}`;
+		showModal = true;
+	};
+
+	const handleClose = () => {
+		showModal = false;
 	};
 
 	function toTitleCase(str) {
@@ -51,3 +57,7 @@
 		</button>
 	</div>
 </div>
+
+{#if showModal}
+	<AppModal {app} on:close={handleClose} />
+{/if}
