@@ -52,6 +52,28 @@ export const addApp = async (name, description, organization, price, tags) => {
     }
 };
 
+export const requestApp = async (name, description, organization, price, tags) => {
+    if (!name || !description || !organization || !price || !Array.isArray(tags)) {
+        console.error('Invalid app data');
+        return null;
+    }
+    try {
+        console.log('Requesting app:', { name, description, organization, price, tags });
+        const docRef = await addDoc(collection(db, 'requested_apps'), {
+            name,
+            description,
+            organization,
+            price,
+            tags,
+            createdAt: serverTimestamp()
+        });
+        return { id: docRef.id, name, description, organization, price, tags };
+    } catch (error) {
+        console.error('Error requesting app:', error.message);
+        return null;
+    }
+};
+
 // Fetch reviews by app ID
 export const fetchReviewsByAppId = async (appId) => {
     if (!appId) {
@@ -68,25 +90,6 @@ export const fetchReviewsByAppId = async (appId) => {
     }
 };
 
-// Add a new review
-export const addReview = async (appId, reviewText, rating) => {
-    if (!appId || !reviewText || typeof rating !== 'number') {
-        console.error('Invalid review data');
-        return null;
-    }
-    try {
-        const docRef = await addDoc(collection(db, 'reviews'), {
-            appId,
-            text: reviewText,
-            rating,
-            createdAt: serverTimestamp()
-        });
-        return { id: docRef.id, appId, reviewText, rating };
-    } catch (error) {
-        console.error('Error adding review:', error.message);
-        return null;
-    }
-};
 
 // Check if username is unique
 export const isUsernameUnique = async (username) => {

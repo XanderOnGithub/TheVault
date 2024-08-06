@@ -3,8 +3,6 @@
 	import { createEventDispatcher } from 'svelte';
 	import AddReviewModal from './AddReviewModal.svelte';
 	import { fetchUsernames } from '../../lib/firebase/firestoreService';
-	import { user } from '../../lib/firebase/authService';
-	import { onMount } from 'svelte';
 
 	// Export the app prop
 	export let app;
@@ -17,17 +15,12 @@
 	let currentReviewIndex = 0;
 	let combinedReviews = [];
 	let usernames = {};
-	let loggedIn = false;
-
-	// Subscribe to the user store to update loggedIn state
-	user.subscribe((value) => {
-		loggedIn = !!value;
-	});
+	let loggedIn = false; // Assume this is set based on your authentication logic
 
 	// Load usernames and combine reviews and ratings
 	async function loadUsernames() {
 		usernames = await fetchUsernames();
-		combinedReviews = Object.keys(app.reviews).map((userID) => ({
+		$: combinedReviews = Object.keys(app.reviews).map((userID) => ({
 			userID,
 			review: app.reviews[userID],
 			rating: app.ratings[userID],
@@ -35,9 +28,7 @@
 		}));
 	}
 
-	onMount(() => {
-		loadUsernames();
-	});
+	loadUsernames();
 
 	// Close the modal
 	function closeModal() {
@@ -126,11 +117,7 @@
 		</div>
 		{#if combinedReviews.length > 0}
 			<div class="flex items-center mb-4">
-				<button
-					on:click={prevReview}
-					disabled={currentReviewIndex === 0}
-					class="mr-2 disabled:text-gray-600">←</button
-				>
+				<button on:click={prevReview} disabled={currentReviewIndex === 0} class="mr-2">←</button>
 				<div class="flex-1 text-center">
 					<p class="text-gray-400">
 						<strong>{combinedReviews[currentReviewIndex].username}</strong>: {combinedReviews[
@@ -143,7 +130,7 @@
 				<button
 					on:click={nextReview}
 					disabled={currentReviewIndex === combinedReviews.length - 1}
-					class="ml-2 disabled:text-gray-600">→</button
+					class="ml-2">→</button
 				>
 			</div>
 		{:else}

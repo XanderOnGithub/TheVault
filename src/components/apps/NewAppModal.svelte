@@ -1,18 +1,22 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-	import { addApp } from '$lib/firebase/firestoreService';
+	import { requestApp } from '$lib/firebase/firestoreService';
 
 	let name = '';
 	let description = '';
 	let organization = '';
 	let price = '';
 	let tags = '';
+	let isSubmitting = false;
 	const dispatch = createEventDispatcher();
 
 	const handleAddApp = async () => {
+		if (isSubmitting) return;
+		isSubmitting = true;
+
 		if (name && description && organization && price && tags) {
 			const tagsArray = tags.split(',').map((tag) => tag.trim());
-			const newApp = await addApp(
+			const newApp = await requestApp(
 				name,
 				description,
 				organization,
@@ -21,14 +25,23 @@
 			);
 			dispatch('appadded', newApp);
 		}
+
+		isSubmitting = false;
 	};
 </script>
 
 <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
 	<div
-		class="bg-white dark:bg-black border border-gray-300 px-6 py-6 rounded-md shadow-lg max-w-md w-full"
+		class="bg-white dark:bg-black border border-gray-300 px-6 py-6 rounded-md shadow-lg max-w-md w-full relative"
 	>
-		<h2 class="text-2xl font-bold mb-4 text-accent">Add New App</h2>
+		<!-- Close button in the top right corner -->
+		<button
+			class="absolute top-2 right-2 text-black dark:text-white text-xl"
+			on:click={() => dispatch('close')}
+		>
+			✖
+		</button>
+		<h2 class="text-2xl font-bold mb-4 text-accent text-center">Request New App</h2>
 		<div class="mb-4">
 			<label for="app-name" class="block text-gray-700 dark:text-gray-300">App Name</label>
 			<input
@@ -78,9 +91,14 @@
 				id="app-tags"
 			/>
 		</div>
-		<div class="flex justify-end">
-			<button class="btn btn-secondary mr-2" on:click={() => dispatch('close')}>Cancel</button>
-			<button class="btn btn-primary" on:click={handleAddApp}>Add App</button>
+		<div class="flex flex-col justify-center text-center">
+			<p class="text-gray-400">
+				By requesting this application, you are agreeing that this application follows our terms of
+				service.
+			</p>
+			<button class="btn btn-primary mt-5" on:click={handleAddApp} disabled={isSubmitting}>
+				{isSubmitting ? 'Submitting...' : 'Add App'}
+			</button>
 		</div>
 	</div>
 </div>

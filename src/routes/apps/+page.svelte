@@ -44,7 +44,6 @@
 
 	// Event handler for adding a new app
 	const handleAppAdded = (event) => {
-		apps.update((currentApps) => [event.detail, ...currentApps]);
 		showModal.set(false);
 	};
 </script>
@@ -65,7 +64,11 @@
 
 	<div class="flex justify-end mb-4">
 		<!-- Button to open the modal for adding a new app -->
-		<button class="btn btn-primary" on:click={() => showModal.set(true)}>Add New App</button>
+		<button class="btn btn-primary flex items-center" on:click={() => showModal.set(true)}>
+			<!-- Add icon (optional) -->
+			<span class="mr-2">+</span>
+			Request App
+		</button>
 	</div>
 
 	<!-- Display the list of filtered apps or a message if no apps are found -->
