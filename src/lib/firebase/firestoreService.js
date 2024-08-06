@@ -1,24 +1,30 @@
 import { db } from './firebaseConfig';
 import { collection, getDocs, doc, getDoc, addDoc, query, where, orderBy, serverTimestamp, writeBatch } from 'firebase/firestore';
 
-// Fetch all apps
+/**
+ * Fetches all apps from the Firestore database.
+ * @returns {Promise<Array<Object>>} - A promise that resolves to an array of app objects.
+ */
 export const fetchApps = async () => {
     try {
         const appsQuery = collection(db, 'apps');
         const querySnapshot = await getDocs(appsQuery);
-        const apps = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        return apps;
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
         console.error('Error fetching apps:', error.message);
         return [];
     }
 };
 
-// Fetch app by ID
+/**
+ * Fetches an app by its ID from the Firestore database.
+ * @param {string} id - The ID of the app to fetch.
+ * @returns {Promise<Object|null>} - A promise that resolves to the app object if found, otherwise null.
+ * @throws {Error} - If the app ID is invalid.
+ */
 export const fetchAppById = async (id) => {
     if (!id) {
-        console.error('Invalid app ID');
-        return null;
+        throw new Error('Invalid app ID');
     }
     try {
         const docRef = doc(db, 'apps', id);
@@ -30,11 +36,19 @@ export const fetchAppById = async (id) => {
     }
 };
 
-// Add a new app
+/**
+ * Adds a new app to the Firestore database.
+ * @param {string} name - The name of the app.
+ * @param {string} description - The description of the app.
+ * @param {string} organization - The organization that created the app.
+ * @param {string} price - The price of the app.
+ * @param {Array<string>} tags - An array of tags associated with the app.
+ * @returns {Promise<Object|null>} - A promise that resolves to the newly added app object, otherwise null.
+ * @throws {Error} - If the app data is invalid.
+ */
 export const addApp = async (name, description, organization, price, tags) => {
     if (!name || !description || !organization || !price || !Array.isArray(tags)) {
-        console.error('Invalid app data');
-        return null;
+        throw new Error('Invalid app data');
     }
     try {
         const docRef = await addDoc(collection(db, 'apps'), {
@@ -52,13 +66,21 @@ export const addApp = async (name, description, organization, price, tags) => {
     }
 };
 
+/**
+ * Requests a new app to be added to the Firestore database.
+ * @param {string} name - The name of the app.
+ * @param {string} description - The description of the app.
+ * @param {string} organization - The organization that created the app.
+ * @param {string} price - The price of the app.
+ * @param {Array<string>} tags - An array of tags associated with the app.
+ * @returns {Promise<Object|null>} - A promise that resolves to the requested app object, otherwise null.
+ * @throws {Error} - If the app data is invalid.
+ */
 export const requestApp = async (name, description, organization, price, tags) => {
     if (!name || !description || !organization || !price || !Array.isArray(tags)) {
-        console.error('Invalid app data');
-        return null;
+        throw new Error('Invalid app data');
     }
     try {
-        console.log('Requesting app:', { name, description, organization, price, tags });
         const docRef = await addDoc(collection(db, 'requested_apps'), {
             name,
             description,
@@ -74,11 +96,15 @@ export const requestApp = async (name, description, organization, price, tags) =
     }
 };
 
-// Fetch reviews by app ID
+/**
+ * Fetches reviews for a specific app by its ID from the Firestore database.
+ * @param {string} appId - The ID of the app to fetch reviews for.
+ * @returns {Promise<Array<Object>>} - A promise that resolves to an array of review objects.
+ * @throws {Error} - If the app ID is invalid.
+ */
 export const fetchReviewsByAppId = async (appId) => {
     if (!appId) {
-        console.error('Invalid app ID');
-        return [];
+        throw new Error('Invalid app ID');
     }
     try {
         const reviewsQuery = query(collection(db, 'reviews'), where('appId', '==', appId), orderBy('createdAt', 'desc'));
@@ -90,12 +116,15 @@ export const fetchReviewsByAppId = async (appId) => {
     }
 };
 
-
-// Check if username is unique
+/**
+ * Checks if a username is unique in the Firestore database.
+ * @param {string} username - The username to check.
+ * @returns {Promise<boolean>} - A promise that resolves to true if the username is unique, otherwise false.
+ * @throws {Error} - If the username is invalid.
+ */
 export const isUsernameUnique = async (username) => {
     if (!username) {
-        console.error('Invalid username');
-        return false;
+        throw new Error('Invalid username');
     }
     try {
         const usernamesRef = collection(db, 'usernames');
@@ -108,11 +137,16 @@ export const isUsernameUnique = async (username) => {
     }
 };
 
-// Save a new username
+/**
+ * Saves a new username to the Firestore database.
+ * @param {string} uid - The user ID.
+ * @param {string} username - The username to save.
+ * @returns {Promise<Object|null>} - A promise that resolves to the saved username object, otherwise null.
+ * @throws {Error} - If the user data is invalid.
+ */
 export const saveUsername = async (uid, username) => {
     if (!uid || !username) {
-        console.error('Invalid user data');
-        return null;
+        throw new Error('Invalid user data');
     }
     try {
         const usernamesRef = collection(db, 'usernames');
@@ -124,7 +158,10 @@ export const saveUsername = async (uid, username) => {
     }
 };
 
-// Fetch all tags
+/**
+ * Fetches all tags from the Firestore database.
+ * @returns {Promise<Array<string>>} - A promise that resolves to an array of tag names.
+ */
 export const fetchTags = async () => {
     try {
         const tagsQuery = collection(db, 'tags');
@@ -137,66 +174,40 @@ export const fetchTags = async () => {
 };
 
 /**
- * Adds a review to an app.
+ * Adds a review to an app in the Firestore database.
  * @param {string} appId - The ID of the app.
  * @param {string} userId - The ID of the user.
  * @param {number} rating - The rating given by the user.
  * @param {string} reviewText - The text review given by the user.
- * @returns {Promise<boolean>} - Returns true if the review was added successfully, otherwise false.
+ * @returns {Promise<boolean>} - A promise that resolves to true if the review was added successfully, otherwise false.
+ * @throws {Error} - If the review data is invalid.
  */
 export const addReviewToApp = async (appId, userId, rating, reviewText) => {
-    if (!appId) {
-        console.error('Invalid review data: appId is missing', { appId, userId, rating, reviewText });
-        return false;
+    if (!appId || !userId || !reviewText || isNaN(parseInt(rating, 10))) {
+        throw new Error('Invalid review data');
     }
-    if (!userId) {
-        console.error('Invalid review data: userId is missing', { appId, userId, rating, reviewText });
-        return false;
-    }
-
-    // Convert rating to an integer
-    const intRating = parseInt(rating, 10);
-    if (isNaN(intRating)) {
-        console.error('Invalid review data: rating is not a number', { appId, userId, rating, reviewText });
-        return false;
-    }
-
-    if (!reviewText) {
-        console.error('Invalid review data: reviewText is missing', { appId, userId, rating, reviewText });
-        return false;
-    }
-
     try {
-        console.log('Starting to add review', { appId, userId, rating: intRating, reviewText });
-
         const appDocRef = doc(db, 'apps', appId);
-        console.log('App document reference:', appDocRef);
-
         const batch = writeBatch(db);
-        console.log('Batch initialized');
 
-        // Update the ratings map
+        // Update the ratings and reviews map
         batch.update(appDocRef, {
-            [`ratings.${userId}`]: intRating
-        });
-        console.log('Ratings update prepared');
-
-        // Update the reviews map
-        batch.update(appDocRef, {
+            [`ratings.${userId}`]: parseInt(rating, 10),
             [`reviews.${userId}`]: reviewText
         });
-        console.log('Reviews update prepared');
 
         await batch.commit();
-        console.log('Batch committed successfully', { appId, userId, rating: intRating, reviewText });
-
         return true;
     } catch (error) {
-        console.error('Error adding review to app:', error.message, { appId, userId, rating: intRating, reviewText });
+        console.error('Error adding review to app:', error.message);
         return false;
     }
 };
 
+/**
+ * Fetches all usernames from the Firestore database.
+ * @returns {Promise<Object>} - A promise that resolves to an object mapping user IDs to usernames.
+ */
 export const fetchUsernames = async () => {
     try {
         const usernamesQuery = collection(db, 'usernames');
