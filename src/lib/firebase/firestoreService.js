@@ -132,3 +132,80 @@ export const fetchTags = async () => {
         return [];
     }
 };
+
+/**
+ * Adds a review to an app.
+ * @param {string} appId - The ID of the app.
+ * @param {string} userId - The ID of the user.
+ * @param {number} rating - The rating given by the user.
+ * @param {string} reviewText - The text review given by the user.
+ * @returns {Promise<boolean>} - Returns true if the review was added successfully, otherwise false.
+ */
+export const addReviewToApp = async (appId, userId, rating, reviewText) => {
+    if (!appId) {
+        console.error('Invalid review data: appId is missing', { appId, userId, rating, reviewText });
+        return false;
+    }
+    if (!userId) {
+        console.error('Invalid review data: userId is missing', { appId, userId, rating, reviewText });
+        return false;
+    }
+
+    // Convert rating to an integer
+    const intRating = parseInt(rating, 10);
+    if (isNaN(intRating)) {
+        console.error('Invalid review data: rating is not a number', { appId, userId, rating, reviewText });
+        return false;
+    }
+
+    if (!reviewText) {
+        console.error('Invalid review data: reviewText is missing', { appId, userId, rating, reviewText });
+        return false;
+    }
+
+    try {
+        console.log('Starting to add review', { appId, userId, rating: intRating, reviewText });
+
+        const appDocRef = doc(db, 'apps', appId);
+        console.log('App document reference:', appDocRef);
+
+        const batch = writeBatch(db);
+        console.log('Batch initialized');
+
+        // Update the ratings map
+        batch.update(appDocRef, {
+            [`ratings.${userId}`]: intRating
+        });
+        console.log('Ratings update prepared');
+
+        // Update the reviews map
+        batch.update(appDocRef, {
+            [`reviews.${userId}`]: reviewText
+        });
+        console.log('Reviews update prepared');
+
+        await batch.commit();
+        console.log('Batch committed successfully', { appId, userId, rating: intRating, reviewText });
+
+        return true;
+    } catch (error) {
+        console.error('Error adding review to app:', error.message, { appId, userId, rating: intRating, reviewText });
+        return false;
+    }
+};
+
+export const fetchUsernames = async () => {
+    try {
+        const usernamesQuery = collection(db, 'usernames');
+        const querySnapshot = await getDocs(usernamesQuery);
+        const usernamesMap = {};
+        querySnapshot.forEach(doc => {
+            const data = doc.data();
+            usernamesMap[data.uid] = data.username;
+        });
+        return usernamesMap;
+    } catch (error) {
+        console.error('Error fetching usernames:', error.message);
+        return {};
+    }
+};

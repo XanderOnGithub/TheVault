@@ -67,6 +67,15 @@ export const setUsername = async (username) => {
     }
 };
 
+export const getUsername = () => {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+        return currentUser.displayName;
+    } else {
+        throw new Error('No authenticated user');
+    }
+};
+
 export const isLoggedIn = () => {
     let loggedIn = false;
     user.subscribe(currentUser => {

@@ -1,13 +1,17 @@
 <script>
 	import { onMount } from 'svelte';
-	import { isLoggedIn, logout } from '$lib/firebase/authService';
+	import { isLoggedIn, logout, getUsername } from '$lib/firebase/authService';
 	import { goto } from '$app/navigation';
 	import DateTimeText from '../dateTimeText.svelte';
 
 	let userLoggedIn = false;
+	let username = '';
 
 	onMount(() => {
 		userLoggedIn = isLoggedIn();
+		if (userLoggedIn) {
+			username = getUsername();
+		}
 	});
 
 	function handleLogout() {
@@ -28,16 +32,24 @@
 				<DateTimeText />
 			</div>
 
+			<!-- Welcome Username (Small Screens) -->
+			{#if userLoggedIn}
+				<div class="sm:hidden">
+					<p class="text-sm">Welcome {username},</p>
+				</div>
+			{/if}
+
 			<!-- Logo -->
 			<div class="absolute left-1/2 transform -translate-x-1/2">
 				<a href="/" class="text-xl md:text-2xl font-bold">THE VAULT</a>
 			</div>
 
 			<!-- Buttons -->
-			<div
-				class="flex items-center space-x-6 sm:space-x-reverse sm:flex-row-reverse ml-auto sm:ml-0"
-			>
+			<div class="flex items-center space-x-6 sm:space-x-reverse sm:flex-row ml-auto sm:ml-0">
 				{#if userLoggedIn}
+					<div class="hidden sm:block">
+						<p class="pe-5">Welcome {username},</p>
+					</div>
 					<button
 						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 						on:click={handleLogout}>Logout</button

@@ -1,15 +1,79 @@
-<!-- AppModal.svelte -->
 <script>
+	// Import necessary modules and components
 	import { createEventDispatcher } from 'svelte';
+	import AddReviewModal from './AddReviewModal.svelte';
+	import { fetchUsernames } from '../../lib/firebase/firestoreService';
+	import { user } from '../../lib/firebase/authService';
+	import { onMount } from 'svelte';
+
+	// Export the app prop
 	export let app;
+
+	// Create an event dispatcher
 	const dispatch = createEventDispatcher();
 
+	// State variables
+	let showReviewModal = false;
+	let currentReviewIndex = 0;
+	let combinedReviews = [];
+	let usernames = {};
+	let loggedIn = false;
+
+	// Subscribe to the user store to update loggedIn state
+	user.subscribe((value) => {
+		loggedIn = !!value;
+	});
+
+	// Load usernames and combine reviews and ratings
+	async function loadUsernames() {
+		usernames = await fetchUsernames();
+		combinedReviews = Object.keys(app.reviews).map((userID) => ({
+			userID,
+			review: app.reviews[userID],
+			rating: app.ratings[userID],
+			username: usernames[userID]
+		}));
+	}
+
+	onMount(() => {
+		loadUsernames();
+	});
+
+	// Close the modal
 	function closeModal() {
 		dispatch('close');
 	}
 
+	// Show the review modal
 	function addReview() {
-		// Implement the logic to add a review
+		showReviewModal = true;
+	}
+
+	// Close the review modal
+	function closeReviewModal() {
+		showReviewModal = false;
+	}
+
+	// Navigate to the next review
+	function nextReview() {
+		if (currentReviewIndex < combinedReviews.length - 1) {
+			currentReviewIndex++;
+		}
+	}
+
+	// Navigate to the previous review
+	function prevReview() {
+		if (currentReviewIndex > 0) {
+			currentReviewIndex--;
+		}
+	}
+
+	// Generate star ratings based on the rating value
+	function getStarRating(rating) {
+		const fullStar = '★';
+		const emptyStar = '☆';
+		const maxStars = 5;
+		return fullStar.repeat(rating) + emptyStar.repeat(maxStars - rating);
 	}
 </script>
 
@@ -24,8 +88,9 @@
 		<p class="mb-4">{app.description}</p>
 		<div class="mb-4">
 			<p class="text-gray-400">
-				<span class="text-black dark:text-white font-semibold">Organization: </span>
-				{app.organization}
+				<span class="text-black dark:text-white font-semibold"
+					>Organization:
+				</span>{app.organization}
 			</p>
 		</div>
 		<div class="mb-4">
@@ -52,10 +117,41 @@
 		</div>
 		<div class="flex justify-between items-center mb-4">
 			<p class="font-semibold">Reviews:</p>
-			<button
-				class=" text-gray-500 hover:text-black dark:hover:text-white px-3 py-1 rounded"
-				on:click={addReview}>Add Review</button
-			>
+			{#if loggedIn}
+				<button
+					class="text-gray-500 hover:text-black dark:hover:text-white px-3 py-1 rounded"
+					on:click={addReview}>Add Review</button
+				>
+			{/if}
 		</div>
+		{#if combinedReviews.length > 0}
+			<div class="flex items-center mb-4">
+				<button
+					on:click={prevReview}
+					disabled={currentReviewIndex === 0}
+					class="mr-2 disabled:text-gray-600">←</button
+				>
+				<div class="flex-1 text-center">
+					<p class="text-gray-400">
+						<strong>{combinedReviews[currentReviewIndex].username}</strong>: {combinedReviews[
+							currentReviewIndex
+						].review}
+						<br />
+						Rating: {getStarRating(combinedReviews[currentReviewIndex].rating)}
+					</p>
+				</div>
+				<button
+					on:click={nextReview}
+					disabled={currentReviewIndex === combinedReviews.length - 1}
+					class="ml-2 disabled:text-gray-600">→</button
+				>
+			</div>
+		{:else}
+			<p class="text-gray-400">No reviews available.</p>
+		{/if}
 	</div>
 </div>
+
+{#if showReviewModal}
+	<AddReviewModal appId={app.id} on:close={closeReviewModal} />
+{/if}

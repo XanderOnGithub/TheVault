@@ -9,50 +9,37 @@
 	import { fetchApps, fetchTags } from '$lib/firebase/firestoreService';
 
 	// Initialize state variables
-	let searchQuery = '';
+	let searchQuery = writable('');
 	let selectedTags = [];
 	const apps = writable([]);
 	const showModal = writable(false);
 	const tagOptions = writable([]);
 
-	// Function to fetch the list of apps based on selected tags
-	const fetchAppList = async () => {
-		console.log('Fetching apps with tags:', selectedTags);
-		const appList = await fetchApps(selectedTags);
-		console.log('Fetched apps:', appList);
+	// Function to fetch the available tag options and app list
+	const initializeData = async () => {
+		const [tags, appList] = await Promise.all([fetchTags(), fetchApps(selectedTags)]);
+		tagOptions.set(tags);
 		apps.set(appList);
 	};
 
-	// Function to fetch the available tag options
-	const fetchTagOptions = async () => {
-		const tags = await fetchTags();
-		tagOptions.set(tags);
-	};
-
 	// Fetch tag options and app list on component mount
-	onMount(async () => {
-		await fetchTagOptions();
-		await fetchAppList();
-	});
+	onMount(initializeData);
 
 	// Derived store to filter apps based on the search query
-	const filteredApps = derived(apps, ($apps) => {
-		const filtered = $apps.filter((app) => {
-			return app.name.toLowerCase().includes(searchQuery.toLowerCase());
-		});
-		console.log('Filtered apps:', filtered);
-		return filtered;
-	});
+	const filteredApps = derived([apps, searchQuery], ([$apps, $searchQuery]) =>
+		$apps.filter((app) => app.name.toLowerCase().includes($searchQuery.toLowerCase()))
+	);
 
 	// Event handler for search input
 	const handleSearch = (event) => {
-		searchQuery = event.target.value;
+		searchQuery.set(event.target.value);
 	};
 
 	// Event handler for tag change
 	const handleTagChange = async (event) => {
 		selectedTags = event.detail;
-		await fetchAppList();
+		const appList = await fetchApps(selectedTags);
+		apps.set(appList);
 	};
 
 	// Event handler for adding a new app
