@@ -19,7 +19,7 @@
 	});
 
 	const handleLoginRedirect = () => {
-		if (user && user.isAuthenticated) {
+		if (currentUser !== null) {
 			goto('/apps');
 		} else {
 			goto('/auth?mode=login');
