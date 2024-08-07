@@ -15,12 +15,12 @@
 	let currentReviewIndex = 0;
 	let combinedReviews = [];
 	let usernames = {};
-	let loggedIn = false; // Assume this is set based on your authentication logic
+	let loggedIn = true; // Assume this is set based on your authentication logic
 
 	// Load usernames and combine reviews and ratings
 	async function loadUsernames() {
 		usernames = await fetchUsernames();
-		$: combinedReviews = Object.keys(app.reviews).map((userID) => ({
+		combinedReviews = Object.keys(app.reviews).map((userID) => ({
 			userID,
 			review: app.reviews[userID],
 			rating: app.ratings[userID],

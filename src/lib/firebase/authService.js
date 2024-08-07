@@ -10,6 +10,34 @@ import { isUsernameUnique, saveUsername } from './firestoreService';
  */
 export const user = writable(null);
 
+/**
+ * Initializes the authentication service.
+ */
+export const initAuth = () => {
+    console.log('Initializing authentication service...');
+    onAuthStateChanged(auth, (currentUser) => {
+        if (currentUser) {
+            console.log('User is logged in:', {
+                email: currentUser.email,
+                uid: currentUser.uid,
+                displayName: currentUser.displayName
+            });
+
+            // Set user data in the store
+            user.set({
+                email: currentUser.email,
+                uid: currentUser.uid,
+                displayName: currentUser.displayName
+            });
+
+        } else {
+            console.log('No user is logged in.');
+            user.set(null);
+        }
+    });
+};
+
+
 // Update user store on authentication state change
 onAuthStateChanged(auth, (currentUser) => {
     user.set(currentUser ? { email: currentUser.email, uid: currentUser.uid, displayName: currentUser.displayName } : null);
@@ -137,3 +165,4 @@ export const isLoggedIn = () => {
     const currentUser = get(user);
     return !!currentUser;
 };
+

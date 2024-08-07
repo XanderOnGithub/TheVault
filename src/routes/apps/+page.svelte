@@ -1,12 +1,13 @@
 <script>
 	// Import necessary modules and components
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import AppCard from '../../components/apps/AppCard.svelte';
 	import NewAppModal from '../../components/apps/NewAppModal.svelte';
 	import AppNav from '../../components/apps/AppNav.svelte';
 	import VaultFooter from '../../components/vaultFooter.svelte';
 	import { writable, derived } from 'svelte/store';
 	import { fetchApps, fetchTags } from '$lib/firebase/firestoreService';
+	import { user } from '../../lib/firebase/authService'; // Import the user store
 
 	// Initialize state variables
 	let searchQuery = writable('');
@@ -15,11 +16,27 @@
 	const showModal = writable(false);
 	const tagOptions = writable([]);
 
+	let currentUser = null;
+
+	// Subscribe to the user store to get the current user
+	const unsubscribe = user.subscribe((value) => {
+		currentUser = value;
+	});
+
+	// Cleanup subscription on component destroy
+	onDestroy(() => {
+		unsubscribe();
+	});
+
 	// Function to fetch the available tag options and app list
 	const initializeData = async () => {
-		const [tags, appList] = await Promise.all([fetchTags(), fetchApps(selectedTags)]);
-		tagOptions.set(tags);
-		apps.set(appList);
+		try {
+			const [tags, appList] = await Promise.all([fetchTags(), fetchApps(selectedTags)]);
+			tagOptions.set(tags);
+			apps.set(appList);
+		} catch (error) {
+			console.error('Error initializing data:', error);
+		}
 	};
 
 	// Fetch tag options and app list on component mount
@@ -35,21 +52,14 @@
 		searchQuery.set(event.target.value);
 	};
 
-	// Event handler for tag change
-	const handleTagChange = async (event) => {
-		selectedTags = event.detail;
-		const appList = await fetchApps(selectedTags);
-		apps.set(appList);
-	};
-
 	// Event handler for adding a new app
-	const handleAppAdded = (event) => {
+	const handleAppAdded = () => {
 		showModal.set(false);
 	};
 </script>
 
 <!-- Navigation Component -->
-<AppNav />
+<AppNav {currentUser} />
 
 <main class="p-8 bg-white dark:bg-black text-black dark:text-white min-h-screen">
 	<div class="flex mb-4 w-full px-6 justify-center">
@@ -62,14 +72,16 @@
 		/>
 	</div>
 
-	<div class="flex justify-end mb-4">
-		<!-- Button to open the modal for adding a new app -->
-		<button class="btn btn-primary flex items-center" on:click={() => showModal.set(true)}>
-			<!-- Add icon (optional) -->
-			<span class="mr-2">+</span>
-			Request App
-		</button>
-	</div>
+	{#if currentUser && currentUser.isAuthenticated}
+		<div class="flex justify-end mb-4">
+			<!-- Button to open the modal for adding a new app -->
+			<button class="btn btn-primary flex items-center" on:click={() => showModal.set(true)}>
+				<!-- Add icon -->
+				<span class="mr-2">+</span>
+				Request App
+			</button>
+		</div>
+	{/if}
 
 	<!-- Display the list of filtered apps or a message if no apps are found -->
 	{#if $filteredApps.length > 0}

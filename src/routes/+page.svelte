@@ -2,13 +2,41 @@
 	import { goto } from '$app/navigation';
 	import DateTimeText from '../components/dateTimeText.svelte';
 	import VaultFooter from '../components/vaultFooter.svelte';
+	import { user, logout } from '../lib/firebase/authService';
+	import { get } from 'svelte/store';
+
+	let currentUser = null;
+
+	// Subscribe to the user store to get the current user
+	const unsubscribe = user.subscribe((value) => {
+		currentUser = value;
+	});
+
+	// Cleanup subscription on component destroy
+	import { onDestroy } from 'svelte';
+	onDestroy(() => {
+		unsubscribe();
+	});
 
 	const handleLoginRedirect = () => {
-		goto('/auth?mode=login');
+		if (user && user.isAuthenticated) {
+			goto('/apps');
+		} else {
+			goto('/auth?mode=login');
+		}
 	};
 
 	const handleRegisterRedirect = () => {
 		goto('/auth?mode=register');
+	};
+
+	const handleLogout = async () => {
+		try {
+			await logout();
+			currentUser = get(user);
+		} catch (error) {
+			console.error('Error logging out:', error.message);
+		}
 	};
 </script>
 
@@ -35,14 +63,24 @@
 				<div
 					class="hidden sm:flex items-center space-x-6 sm:space-x-reverse sm:flex-row-reverse ml-auto sm:ml-0"
 				>
-					<button
-						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
-						on:click={handleLoginRedirect}>Login</button
-					>
-					<button
-						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
-						on:click={handleRegisterRedirect}>Register</button
-					>
+					{#if currentUser}
+						<p class="mono text-sm md:text-base text-black dark:text-white">
+							Welcome {currentUser.displayName},
+							<button
+								class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+								on:click={handleLogout}>Logout</button
+							>
+						</p>
+					{:else}
+						<button
+							class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+							on:click={handleLoginRedirect}>Login</button
+						>
+						<button
+							class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
+							on:click={handleRegisterRedirect}>Register</button
+						>
+					{/if}
 				</div>
 			</div>
 		</div>

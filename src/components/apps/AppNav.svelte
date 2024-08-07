@@ -1,18 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
-	import { isLoggedIn, logout, getUsername } from '$lib/firebase/authService';
 	import { goto } from '$app/navigation';
 	import DateTimeText from '../dateTimeText.svelte';
+	import { logout } from '$lib/firebase/authService';
 
-	let userLoggedIn = false;
-	let username = '';
-
-	onMount(() => {
-		userLoggedIn = isLoggedIn();
-		if (userLoggedIn) {
-			username = getUsername();
-		}
-	});
+	export let currentUser = null;
 
 	function handleLogout() {
 		logout();
@@ -33,9 +25,9 @@
 			</div>
 
 			<!-- Welcome Username (Small Screens) -->
-			{#if userLoggedIn}
+			{#if currentUser !== null}
 				<div class="sm:hidden">
-					<p class="text-sm">Welcome {username},</p>
+					<p class="text-sm">Welcome {currentUser.displayName},</p>
 				</div>
 			{/if}
 
@@ -46,9 +38,9 @@
 
 			<!-- Buttons -->
 			<div class="flex items-center space-x-6 sm:space-x-reverse sm:flex-row ml-auto sm:ml-0">
-				{#if userLoggedIn}
+				{#if currentUser !== null}
 					<div class="hidden sm:block">
-						<p class="pe-5">Welcome {username},</p>
+						<p class="pe-5">Welcome {currentUser.displayName},</p>
 					</div>
 					<button
 						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
