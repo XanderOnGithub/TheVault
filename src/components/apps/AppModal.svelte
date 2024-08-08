@@ -28,6 +28,13 @@
 		}));
 	}
 
+	// Function to convert string to title case
+	function toTitleCase(str) {
+		return str.replace(/\w\S*/g, function (txt) {
+			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+		});
+	}
+
 	loadUsernames();
 
 	// Close the modal
@@ -99,12 +106,16 @@
 			<p class="text-lg text-gray-400">{app.price === '0.00' ? 'FREE' : app.price}</p>
 		</div>
 		<div class="mb-4">
-			<a
-				href={app.link}
-				target="_blank"
-				rel="noopener noreferrer"
-				class="text-gray-500 hover:underline">Visit External Link</a
-			>
+			{#each Object.entries(app.platforms) as [platform, link]}
+				<a
+					href={link}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-gray-500 hover:underline mr-3"
+				>
+					{toTitleCase(platform)}
+				</a>
+			{/each}
 		</div>
 		<div class="flex justify-between items-center mb-4">
 			<p class="font-semibold">Reviews:</p>
