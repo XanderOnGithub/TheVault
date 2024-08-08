@@ -3,6 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import AddReviewModal from './AddReviewModal.svelte';
 	import { fetchUsernames } from '../../lib/firebase/firestoreService';
+	import { user } from '../../lib/firebase/authService';
 
 	// Export the app prop
 	export let app;
@@ -15,7 +16,18 @@
 	let currentReviewIndex = 0;
 	let combinedReviews = [];
 	let usernames = {};
-	let loggedIn = true; // Assume this is set based on your authentication logic
+	let currentUser = null;
+
+	// Subscribe to the user store to get the current user
+	const unsubscribe = user.subscribe((value) => {
+		currentUser = value;
+	});
+
+	// Cleanup subscription on component destroy
+	import { onDestroy } from 'svelte';
+	onDestroy(() => {
+		unsubscribe();
+	});
 
 	// Load usernames and combine reviews and ratings
 	async function loadUsernames() {
@@ -119,7 +131,7 @@
 		</div>
 		<div class="flex justify-between items-center mb-4">
 			<p class="font-semibold">Reviews:</p>
-			{#if loggedIn}
+			{#if currentUser !== null}
 				<button
 					class="text-gray-500 hover:text-black dark:hover:text-white px-3 py-1 rounded"
 					on:click={addReview}>Add Review</button
