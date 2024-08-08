@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import DateTimeText from '../dateTimeText.svelte';
+	import DateTimeText from '../../dateTimeText.svelte';
 	import { logout } from '$lib/firebase/authService';
 	export let currentUser = null;
 
@@ -26,9 +26,9 @@
 			{#if currentUser !== null && currentUser.role >= 2}
 				<button class="sm:hidden absolute left-4">
 					<a
-						href="/admin"
+						href="/apps"
 						class="btn btn-primary flex items-center rounded-md bg-gray-300 hover:bg-gray-400 dark:bg-white dark:hover:bg-gray-100 dark:text-black px-5 py-2 text-sm"
-						>Admin</a
+						>Apps</a
 					>
 				</button>
 			{/if}
@@ -45,9 +45,9 @@
 					{#if currentUser.role >= 2}
 						<button class="hidden sm:block">
 							<a
-								href="/admin"
+								href="/apps"
 								class="btn btn-primary flex items-center rounded-md bg-gray-300 hover:bg-gray-400 dark:bg-white dark:hover:bg-gray-100 dark:text-black px-5 py-2 text-sm"
-								>Admin</a
+								>Apps</a
 							>
 						</button>
 					{/if}

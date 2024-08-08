@@ -1,6 +1,6 @@
 import { db } from './firebaseConfig';
-import { collection, getDocs, doc, getDoc, addDoc, query, where, orderBy, serverTimestamp, writeBatch, deleteField } from 'firebase/firestore';
-import { getUserRole } from './authService';
+import { collection, getDocs, doc, getDoc, setDoc, deleteDoc, addDoc, query, where, orderBy, serverTimestamp, writeBatch, deleteField } from 'firebase/firestore';
+import { getUserRole, user } from './authService';
 
 
 /**
@@ -271,6 +271,54 @@ export const removeReviewFromApp = async (appId, userId, reviewUserId) => {
         return true;
     } catch (error) {
         console.error('Error removing review from app:', error.message);
+        return false;
+    }
+};
+/**
+ * Fetches all app requests from the Firestore database.
+ * @returns {Promise<Array<Object>>} - A promise that resolves to an array of app request objects.
+ */
+export const fetchAppRequests = async () => {
+    try {
+        const appRequestsQuery = collection(db, 'requested_apps');
+        const querySnapshot = await getDocs(appRequestsQuery);
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error('Error fetching app requests:', error.message);
+        return [];
+    }
+};
+
+/**
+ * Handles app requests by either accepting or rejecting them.
+ * @param {string} requestId - The ID of the app request.
+ * @param {boolean} accept - Whether to accept the app request.
+ * @returns {Promise<boolean>} - A promise that resolves to true if the operation was successful, otherwise false.
+ */
+export const handleAppRequest = async (requestId, accept) => {
+    try {
+        console.log('Handling app request:', { requestId, accept, user });
+
+        const requestDocRef = doc(db, 'requested_apps', requestId);
+        const requestDoc = await getDoc(requestDocRef);
+
+        if (!requestDoc.exists()) {
+            console.error('App request does not exist.');
+            return false;
+        }
+
+        const appData = requestDoc.data();
+        console.log('App request data:', appData);
+
+        if (accept) {
+            const appDocRef = doc(db, 'apps', requestId);
+            await setDoc(appDocRef, appData);
+        }
+
+        await deleteDoc(requestDocRef);
+        return true;
+    } catch (error) {
+        console.error('Error handling app request:', error.message);
         return false;
     }
 };

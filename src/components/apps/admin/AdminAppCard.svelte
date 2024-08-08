@@ -1,17 +1,7 @@
 <script>
-	import AppModal from './AppModal.svelte';
-	import AppCardTag from './card/AppCardTag.svelte';
+	import AppCardTag from '../../apps/card/AppCardTag.svelte';
+	import { handleAppRequest } from '../../../lib/firebase/firestoreService';
 	export let app;
-
-	let showModal = false;
-
-	const handleClick = (id) => {
-		showModal = true;
-	};
-
-	const handleClose = () => {
-		showModal = false;
-	};
 
 	// Function to get all App platform keys
 	function getPlatformKeys(platforms) {
@@ -23,6 +13,11 @@
 		return str.replace(/\w\S*/g, function (txt) {
 			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 		});
+	}
+
+	// Function to handle app request
+	async function handleRequest(action) {
+		await handleAppRequest(app.id, action);
 	}
 </script>
 
@@ -50,19 +45,14 @@
 
 		<p class="mb-6 text-gray-400 responsive-line"></p>
 
-		<p class="text-lg mono text-gray-400">
-			{app.price === '0.00' ? 'FREE' : app.price}
-		</p>
-
-		<button
-			class="mono text-gray-500 mt-3 hover:text-black dark:hover:text-white"
-			on:click={() => handleClick(app.id)}
-		>
-			View Details
-		</button>
+		<div class="flex justify-between items-center">
+			<p class="text-lg mono text-gray-400">
+				{app.price === '0.00' ? 'FREE' : app.price}
+			</p>
+			<div class="flex flex-row space-x-3">
+				<button class="btn btn-primary" on:click={() => handleRequest(true)}>Accept</button>
+				<button class="btn btn-secondary" on:click={() => handleRequest(false)}>Remove</button>
+			</div>
+		</div>
 	</div>
 </div>
-
-{#if showModal}
-	<AppModal {app} on:close={handleClose} />
-{/if}
