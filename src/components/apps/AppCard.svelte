@@ -1,5 +1,6 @@
 <script>
 	import AppModal from './AppModal.svelte';
+	import AppCardTag from './card/AppCardTag.svelte';
 	export let app;
 
 	let showModal = false;
@@ -12,6 +13,12 @@
 		showModal = false;
 	};
 
+	// Function to get all App platform keys
+	function getPlatformKeys(platforms) {
+		return Object.keys(platforms).sort();
+	}
+
+	// Function to convert string to title case
 	function toTitleCase(str) {
 		return str.replace(/\w\S*/g, function (txt) {
 			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -34,12 +41,16 @@
 		<p class="text-sm text-base-content mb-2">
 			Organization: <span class="text-gray-400">{app.organization}</span>
 		</p>
-		<p class="text-sm text-base-content mb-4">
-			{#each app.tags as tag, index}
-				<span class="text-gray-400 mr-1"
-					>{toTitleCase(tag)}{#if index < app.tags.length - 1},
-					{/if}</span
-				>
+		<p class="text-sm text-base-content flex flex-row w-fit my-4">
+			<span class="mr-3">Tags: </span>
+			{#each app.tags.sort() as tag}
+				<p class="mr-3">{toTitleCase(tag)}</p>
+			{/each}
+		</p>
+
+		<p class="text-sm text-base-content flex flex-row w-fit my-4">
+			{#each getPlatformKeys(app.platforms) as key}
+				<AppCardTag tag={key} />
 			{/each}
 		</p>
 

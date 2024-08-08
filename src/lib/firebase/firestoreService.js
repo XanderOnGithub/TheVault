@@ -37,36 +37,6 @@ export const fetchAppById = async (id) => {
 };
 
 /**
- * Adds a new app to the Firestore database.
- * @param {string} name - The name of the app.
- * @param {string} description - The description of the app.
- * @param {string} organization - The organization that created the app.
- * @param {string} price - The price of the app.
- * @param {Array<string>} tags - An array of tags associated with the app.
- * @returns {Promise<Object|null>} - A promise that resolves to the newly added app object, otherwise null.
- * @throws {Error} - If the app data is invalid.
- */
-export const addApp = async (name, description, organization, price, tags) => {
-    if (!name || !description || !organization || !price || !Array.isArray(tags)) {
-        throw new Error('Invalid app data');
-    }
-    try {
-        const docRef = await addDoc(collection(db, 'apps'), {
-            name,
-            description,
-            organization,
-            price,
-            tags,
-            createdAt: serverTimestamp()
-        });
-        return { id: docRef.id, name, description, organization, price, tags };
-    } catch (error) {
-        console.error('Error adding app:', error.message);
-        return null;
-    }
-};
-
-/**
  * Requests a new app to be added to the Firestore database.
  * @param {string} name - The name of the app.
  * @param {string} description - The description of the app.
