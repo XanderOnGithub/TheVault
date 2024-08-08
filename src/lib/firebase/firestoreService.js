@@ -1,5 +1,5 @@
 import { db } from './firebaseConfig';
-import { collection, getDocs, doc, getDoc, addDoc, query, where, orderBy, serverTimestamp, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, addDoc, query, where, orderBy, serverTimestamp, writeBatch, deleteField } from 'firebase/firestore';
 
 /**
  * Fetches all apps from the Firestore database.
@@ -191,5 +191,70 @@ export const fetchUsernames = async () => {
     } catch (error) {
         console.error('Error fetching usernames:', error.message);
         return {};
+    }
+};
+
+/**
+ * Updates a review for an app in the Firestore database.
+ * @param {string} appId - The ID of the app.
+ * @param {string} userId - The ID of the user.
+ * @param {number} rating - The new rating given by the user.
+ * @param {string} reviewText - The new text review given by the user.
+ * @returns {Promise<boolean>} - A promise that resolves to true if the review was updated successfully, otherwise false.
+ * @throws {Error} - If the review data is invalid.
+ */
+export const updateReviewForApp = async (appId, userId, rating, reviewText) => {
+    if (!appId || !userId || !reviewText || isNaN(parseInt(rating, 10))) {
+        throw new Error('Invalid review data');
+    }
+
+    // Input sanitization
+    const sanitizedReviewText = reviewText.replace(/<[^>]*>?/gm, '');
+
+    try {
+        const appDocRef = doc(db, 'apps', appId);
+        const batch = writeBatch(db);
+
+        // Update the ratings and reviews map
+        batch.update(appDocRef, {
+            [`ratings.${userId}`]: parseInt(rating, 10),
+            [`reviews.${userId}`]: sanitizedReviewText
+        });
+
+        await batch.commit();
+        return true;
+    } catch (error) {
+        console.error('Error updating review for app:', error.message);
+        return false;
+    }
+};
+
+/**
+ * Removes a review from an app in the Firestore database.
+ * @param {string} appId - The ID of the app.
+ * @param {string} userId - The ID of the user.
+ * @returns {Promise<boolean>} - A promise that resolves to true if the review was removed successfully, otherwise false.
+ * @throws {Error} - If the review data is invalid.
+ */
+export const removeReviewFromApp = async (appId, userId) => {
+    if (!appId || !userId) {
+        throw new Error('Invalid review data');
+    }
+
+    try {
+        const appDocRef = doc(db, 'apps', appId);
+        const batch = writeBatch(db);
+
+        // Remove the ratings and reviews map
+        batch.update(appDocRef, {
+            [`ratings.${userId}`]: deleteField(),
+            [`reviews.${userId}`]: deleteField()
+        });
+
+        await batch.commit();
+        return true;
+    } catch (error) {
+        console.error('Error removing review from app:', error.message);
+        return false;
     }
 };
