@@ -46,6 +46,15 @@
 						class="mono text-sm md:text-base text-gray-400 hover:text-black dark:hover:text-white dark:hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition duration-300 ease-in-out"
 						on:click={handleLogout}>Logout</button
 					>
+					{#if currentUser != null && currentUser.role >= 2}
+						<button>
+							<a
+								href="/apps"
+								class="btn btn-primary flex items-center rounded-md bg-gray-300 hover:bg-gray-400 dark:bg-white dark:hover:bg-gray-100 dark:text-black px-5 py-2 text-sm"
+								>Admin</a
+							>
+						</button>
+					{/if}
 				{:else}
 					<a
 						href="/auth"

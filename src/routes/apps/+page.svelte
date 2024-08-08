@@ -72,7 +72,7 @@
 		/>
 	</div>
 
-	{#if currentUser && currentUser.isAuthenticated}
+	{#if currentUser !== null}
 		<div class="flex justify-end mb-4">
 			<!-- Button to open the modal for adding a new app -->
 			<button class="btn btn-primary flex items-center" on:click={() => showModal.set(true)}>
