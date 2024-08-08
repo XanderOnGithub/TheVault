@@ -3,7 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import AddReviewModal from './AddReviewModal.svelte';
 	import ChangeReviewModal from './ChangeReviewModal.svelte';
-	import { fetchUsernames } from '../../lib/firebase/firestoreService';
+	import { fetchUsernames, removeReviewFromApp } from '../../lib/firebase/firestoreService';
 	import { user } from '../../lib/firebase/authService';
 
 	// Export the app prop
@@ -70,6 +70,26 @@
 			username: usernames[userID]
 		}));
 		calculateAverageRating();
+	}
+
+	/**
+	 * Remove the review from the app.
+	 * @async
+	 */
+	async function removeReview() {
+		await loadUsernames(); // Ensure loadUsernames is awaited
+		if (
+			combinedReviews != null &&
+			currentReviewIndex >= 0 &&
+			currentReviewIndex < combinedReviews.length
+		) {
+			await removeReviewFromApp(
+				app.id,
+				currentUser.uid,
+				combinedReviews[currentReviewIndex].userID
+			);
+		}
+		loadUsernames();
 	}
 
 	/**
@@ -252,6 +272,13 @@
 			</div>
 		{:else}
 			<p class="text-gray-400">No reviews available.</p>
+		{/if}
+
+		<!-- Remove Review Button -->
+		{#if currentUser && currentUser.role >= 1}
+			<div class="flex justify-center">
+				<button class="text-center" on:click={removeReview}>Remove Review</button>
+			</div>
 		{/if}
 	</div>
 </div>

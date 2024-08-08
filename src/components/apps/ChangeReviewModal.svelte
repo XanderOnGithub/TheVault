@@ -42,7 +42,7 @@
 			return;
 		}
 
-		const success = await removeReviewFromApp(appId, userId);
+		const success = await removeReviewFromApp(appId, userId, userId);
 		if (success) {
 			dispatch('close');
 		} else {

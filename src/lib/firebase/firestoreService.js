@@ -1,5 +1,7 @@
 import { db } from './firebaseConfig';
 import { collection, getDocs, doc, getDoc, addDoc, query, where, orderBy, serverTimestamp, writeBatch, deleteField } from 'firebase/firestore';
+import { getUserRole } from './authService';
+
 
 /**
  * Fetches all apps from the Firestore database.
@@ -232,23 +234,37 @@ export const updateReviewForApp = async (appId, userId, rating, reviewText) => {
 /**
  * Removes a review from an app in the Firestore database.
  * @param {string} appId - The ID of the app.
- * @param {string} userId - The ID of the user.
+ * @param {string} userId - The ID of the user requesting the deletion.
+ * @param {string} reviewUserId - The ID of the user who wrote the review.
  * @returns {Promise<boolean>} - A promise that resolves to true if the review was removed successfully, otherwise false.
- * @throws {Error} - If the review data is invalid.
+ * @throws {Error} - If the review data is invalid or the user is not authorized to delete the review.
  */
-export const removeReviewFromApp = async (appId, userId) => {
-    if (!appId || !userId) {
+export const removeReviewFromApp = async (appId, userId, reviewUserId) => {
+    if (!appId || !userId || !reviewUserId) {
         throw new Error('Invalid review data');
     }
 
     try {
+        // Fetch the user's role
+        const userRole = await getUserRole(userId);
+
+        // Check if the user is authorized to delete the review
+        if (userRole < 1 && userId !== reviewUserId) {
+            throw new Error('User is not authorized to delete this review');
+        }
+
+        // Ensure reviewUserId is valid
+        if (!reviewUserId || typeof reviewUserId !== 'string' || reviewUserId.trim() === '') {
+            throw new Error('Invalid reviewUserId');
+        }
+
         const appDocRef = doc(db, 'apps', appId);
         const batch = writeBatch(db);
 
         // Remove the ratings and reviews map
         batch.update(appDocRef, {
-            [`ratings.${userId}`]: deleteField(),
-            [`reviews.${userId}`]: deleteField()
+            [`ratings.${reviewUserId}`]: deleteField(),
+            [`reviews.${reviewUserId}`]: deleteField()
         });
 
         await batch.commit();
