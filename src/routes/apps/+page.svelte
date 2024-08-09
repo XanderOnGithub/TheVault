@@ -11,14 +11,13 @@
 
 	// Initialize state variables
 	let searchQuery = writable('');
-	let selectedTags = [];
+	let selectedTags = writable([]); // Store for selected tags
 	let selectedPlatform = writable(''); // Store for selected platform
 	let sortBy = writable('Newest'); // Store for sort by criteria
 	const apps = writable([]);
 	const showModal = writable(false);
 	const tagOptions = writable([]);
 	const platformOptions = writable([]); // Store for platform options
-
 	let currentUser = null;
 
 	// Subscribe to the user store to get the current user
@@ -60,8 +59,55 @@
 		}
 	};
 
-	// Fetch tag options, platform options, and app list on component mount
-	onMount(initializeData);
+	/**
+	 * Event handler for search input.
+	 * @param {Event} event - The input event.
+	 */
+	const handleSearch = (event) => {
+		searchQuery.set(event.target.value);
+	};
+
+	/**
+	 * Event handler for platform selection.
+	 * @param {Event} event - The change event.
+	 */
+	const handlePlatformChange = (event) => {
+		selectedPlatform.set(event.target.value);
+	};
+
+	/**
+	 * Event handler for sort by selection.
+	 * @param {Event} event - The change event.
+	 */
+	const handleSortByChange = (event) => {
+		sortBy.set(event.target.value);
+	};
+
+	/**
+	 * Event handler for tag selection.
+	 * @param {Event} event - The change event.
+	 */
+	const handleTagChange = (event) => {
+		selectedTags.set(Array.from(event.target.selectedOptions, (option) => option.value));
+	};
+
+	/**
+	 * Event handler for deselecting all tags.
+	 */
+	const handleDeselectAllTags = () => {
+		selectedTags.set([]);
+	};
+
+	/**
+	 * Event handler for adding a new app.
+	 */
+	const handleAppAdded = () => {
+		showModal.set(false);
+	};
+
+	onMount(() => {
+		initializeData();
+	});
 
 	/**
 	 * Parse Firestore Timestamp to JavaScript Date.
@@ -77,10 +123,10 @@
 		return new Date(NaN);
 	}
 
-	// Derived store to filter and sort apps based on the search query, selected platform, and sort criteria
+	// Derived store to filter and sort apps based on the search query, selected platform, selected tags, and sort criteria
 	const filteredApps = derived(
-		[apps, searchQuery, selectedPlatform, sortBy],
-		([$apps, $searchQuery, $selectedPlatform, $sortBy]) => {
+		[apps, searchQuery, selectedPlatform, selectedTags, sortBy],
+		([$apps, $searchQuery, $selectedPlatform, $selectedTags, $sortBy]) => {
 			const searchQueryLower = $searchQuery.toLowerCase();
 			const selectedPlatformLower = $selectedPlatform.toLowerCase();
 
@@ -89,7 +135,9 @@
 					!$searchQuery || app.name.toLowerCase().includes(searchQueryLower);
 				const matchesPlatform =
 					!$selectedPlatform || Object.keys(app.platforms).includes(selectedPlatformLower);
-				return matchesSearchQuery && matchesPlatform;
+				const matchesTags =
+					!$selectedTags.length || $selectedTags.every((tag) => app.tags.includes(tag));
+				return matchesSearchQuery && matchesPlatform && matchesTags;
 			});
 
 			// Sort the filtered apps based on the selected sort criteria
@@ -125,77 +173,65 @@
 			return filtered;
 		}
 	);
-
-	/**
-	 * Event handler for search input.
-	 * @param {Event} event - The input event.
-	 */
-	const handleSearch = (event) => {
-		searchQuery.set(event.target.value);
-	};
-
-	/**
-	 * Event handler for platform selection.
-	 * @param {Event} event - The change event.
-	 */
-	const handlePlatformChange = (event) => {
-		selectedPlatform.set(event.target.value);
-	};
-
-	/**
-	 * Event handler for sort by selection.
-	 * @param {Event} event - The change event.
-	 */
-	const handleSortByChange = (event) => {
-		sortBy.set(event.target.value);
-	};
-
-	/**
-	 * Event handler for adding a new app.
-	 */
-	const handleAppAdded = () => {
-		showModal.set(false);
-	};
 </script>
 
 <!-- Navigation Component -->
 <AppNav {currentUser} />
-
 <main class="p-8 bg-white dark:bg-black text-black dark:text-white min-h-screen">
-	<div class="flex flex-col sm:flex-row mx-auto mb-4 w-full px-6">
-		<!-- Sort By Dropdown -->
-		<select
-			class="my-1 sm:my-0 mx-auto px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
-			on:change={handleSortByChange}
-		>
-			<option value="Newest">Newest -> Oldest</option>
-			<option value="Oldest">Oldest -> Newest</option>
-			<option value="Name A -> Z">Name A -> Z</option>
-			<option value="Name Z -> A">Name Z -> A</option>
-			<option value="Price Increasing">Price Increasing</option>
-			<option value="Price Decreasing">Price Decreasing</option>
-		</select>
+	<div class="flex flex-col sm:flex-row mx-auto mb-4 w-full px-6 items-center">
+		<!-- Grouped Sort By and Platform Dropdowns -->
+		<div class="flex flex-col sm:flex-row items-center">
+			<!-- Search Bar -->
+			<input
+				type="text"
+				placeholder="Search apps..."
+				class="sm:mr-2 my-1 sm:my-0 mx-auto px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48 h-10"
+				on:input={handleSearch}
+			/>
 
-		<!-- Platform Dropdown -->
-		<select
-			class="my-1 sm:my-0 mx-auto sm:ml-2 px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
-			on:change={handlePlatformChange}
-		>
-			<option value="">All Platforms</option>
-			{#each $platformOptions as platform}
-				<option value={platform}>{platform}</option>
-			{/each}
-		</select>
-
-		<!-- Search Bar -->
-		<input
-			type="text"
-			placeholder="Search apps..."
-			class="my-1 sm:my-0 sm:ml-2 mx-auto px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
-			on:input={handleSearch}
-		/>
+			<!-- Sort By Dropdown -->
+			<select
+				class="mx-auto my-1 sm:my-0 px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48 h-10"
+				on:change={handleSortByChange}
+			>
+				<option value="Newest">Newest -> Oldest</option>
+				<option value="Oldest">Oldest -> Newest</option>
+				<option value="Name A -> Z">Name A -> Z</option>
+				<option value="Name Z -> A">Name Z -> A</option>
+				<option value="Price Increasing">Price Increasing</option>
+				<option value="Price Decreasing">Price Decreasing</option>
+			</select>
+			<!-- Platform Dropdown -->
+			<select
+				class="mx-auto my-1 sm:my-0 sm:ml-2 px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48 h-10"
+				on:change={handlePlatformChange}
+			>
+				<option value="">All Platforms</option>
+				{#each $platformOptions as platform}
+					<option value={platform}>{platform}</option>
+				{/each}
+			</select>
+		</div>
+		<!-- Tag Dropdown -->
+		<div class="flex items-center">
+			<select
+				class="mx-auto my-1 sm:my-0 sm:ml-2 px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48 h-20"
+				multiple
+				on:change={handleTagChange}
+			>
+				{#each $tagOptions as tag}
+					<option value={tag}>{tag}</option>
+				{/each}
+			</select>
+			<!-- Deselect All Button -->
+			<button
+				class="ml-2 px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white h-10"
+				on:click={handleDeselectAllTags}
+			>
+				Deselect All
+			</button>
+		</div>
 	</div>
-
 	{#if currentUser !== null}
 		<div class="flex justify-end mb-4">
 			<!-- Button to open the modal for adding a new app -->
@@ -206,7 +242,6 @@
 			</button>
 		</div>
 	{/if}
-
 	<!-- Display the list of filtered apps or a message if no apps are found -->
 	{#if $filteredApps.length > 0}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-6">
@@ -217,12 +252,6 @@
 	{:else}
 		<p>No apps found.</p>
 	{/if}
-
-	<!-- Modal for adding a new app -->
-	{#if $showModal}
-		<NewAppModal on:close={() => showModal.set(false)} on:appadded={handleAppAdded} />
-	{/if}
 </main>
-
 <!-- Footer Component -->
 <VaultFooter />

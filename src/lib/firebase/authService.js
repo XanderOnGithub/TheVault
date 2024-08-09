@@ -8,38 +8,35 @@ const db = getFirestore();
 
 export const user = writable(null);
 
+/**
+ * Fetches the role of a user from Firestore.
+ * @param {string} uid - The UID of the user.
+ * @returns {Promise<number>} - A promise that resolves to the user's role.
+ * @throws {Error} - If the role cannot be fetched.
+ */
 const fetchUserRole = async (uid) => {
     try {
-        console.log(`Fetching role for user with UID: ${uid}`);
         const q = query(collection(db, 'user_roles'), where('uid', '==', uid));
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
             const roleDoc = querySnapshot.docs[0];
-            console.log(`Role document data: ${JSON.stringify(roleDoc.data())}`);
             return roleDoc.data().role;
         } else {
-            console.error('Role document does not exist');
             throw new Error('Role not found for the user');
         }
     } catch (error) {
-        console.error('Error fetching user role:', error.message);
         throw new Error('Error fetching user role. Please try again.');
     }
 };
 
+/**
+ * Initializes the authentication service and sets up an auth state listener.
+ */
 export const initAuth = () => {
-    console.log('Initializing authentication service...');
     onAuthStateChanged(auth, async (currentUser) => {
         if (currentUser) {
             try {
                 const role = await fetchUserRole(currentUser.uid);
-                console.log('User is logged in:', {
-                    email: currentUser.email,
-                    uid: currentUser.uid,
-                    displayName: currentUser.displayName,
-                    role
-                });
-
                 user.set({
                     email: currentUser.email,
                     uid: currentUser.uid,
@@ -47,15 +44,21 @@ export const initAuth = () => {
                     role
                 });
             } catch (error) {
-                console.error('Error setting user role:', error.message);
+                // Handle error silently
             }
         } else {
-            console.log('No user is logged in.');
             user.set(null);
         }
     });
 };
 
+/**
+ * Logs in a user with email and password.
+ * @param {string} email - The email of the user.
+ * @param {string} password - The password of the user.
+ * @returns {Promise<void>} - A promise that resolves when the user is logged in.
+ * @throws {Error} - If the login fails.
+ */
 export const login = async (email, password) => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -69,21 +72,31 @@ export const login = async (email, password) => {
             role
         });
     } catch (error) {
-        console.error('Error signing in:', error.message);
         throw new Error('Invalid login credentials');
     }
 };
 
+/**
+ * Logs out the current user.
+ * @returns {Promise<void>} - A promise that resolves when the user is logged out.
+ * @throws {Error} - If the logout fails.
+ */
 export const logout = async () => {
     try {
         await signOut(auth);
         user.set(null);
     } catch (error) {
-        console.error('Error signing out:', error.message);
         throw new Error('Error signing out. Please try again.');
     }
 };
 
+/**
+ * Registers a new user with email and password.
+ * @param {string} email - The email of the new user.
+ * @param {string} password - The password of the new user.
+ * @returns {Promise<Object>} - A promise that resolves to the new user object.
+ * @throws {Error} - If the registration fails.
+ */
 export const register = async (email, password) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -101,11 +114,15 @@ export const register = async (email, password) => {
 
         return currentUser;
     } catch (error) {
-        console.error('Error registering:', error.message);
         handleRegisterError(error);
     }
 };
 
+/**
+ * Handles errors that occur during user registration.
+ * @param {Error} error - The error object.
+ * @throws {Error} - A user-friendly error message.
+ */
 const handleRegisterError = (error) => {
     if (error.code === 'auth/weak-password') {
         throw new Error('Password should be at least 6 characters long.');
@@ -116,6 +133,12 @@ const handleRegisterError = (error) => {
     }
 };
 
+/**
+ * Sets the username for the current authenticated user.
+ * @param {string} username - The new username.
+ * @returns {Promise<void>} - A promise that resolves when the username is set.
+ * @throws {Error} - If setting the username fails.
+ */
 export const setUsername = async (username) => {
     const currentUser = auth.currentUser;
     if (!currentUser) {
@@ -133,11 +156,15 @@ export const setUsername = async (username) => {
 
         user.set({ ...currentUser, displayName: username });
     } catch (error) {
-        console.error('Error setting username:', error.message);
         throw new Error('Error setting username. Please try again.');
     }
 };
 
+/**
+ * Gets the username of the current authenticated user.
+ * @returns {string} - The username of the current authenticated user.
+ * @throws {Error} - If there is no authenticated user.
+ */
 export const getUsername = () => {
     const currentUser = auth.currentUser;
     if (currentUser) {
@@ -147,6 +174,10 @@ export const getUsername = () => {
     }
 };
 
+/**
+ * Checks if a user is currently logged in.
+ * @returns {boolean} - True if a user is logged in, false otherwise.
+ */
 export const isLoggedIn = () => {
     const currentUser = get(user);
     return !!currentUser;
@@ -154,9 +185,8 @@ export const isLoggedIn = () => {
 
 /**
  * Gets the role of the current authenticated user from Firestore.
- * 
- * @returns {Promise<number>} The role of the current authenticated user.
- * @throws {Error} If there is no authenticated user or if fetching the role fails.
+ * @returns {Promise<number>} - A promise that resolves to the role of the current authenticated user.
+ * @throws {Error} - If there is no authenticated user or if fetching the role fails.
  */
 export const getUserRole = async () => {
     const currentUser = auth.currentUser;
@@ -168,7 +198,6 @@ export const getUserRole = async () => {
         const role = await fetchUserRole(currentUser.uid);
         return role;
     } catch (error) {
-        console.error('Error fetching user role:', error.message);
         throw new Error('Error fetching user role. Please try again.');
     }
 };
