@@ -1,32 +1,58 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
-	import { requestApp } from '$lib/firebase/firestoreService';
+	import { createEventDispatcher, onMount } from 'svelte';
+	import { requestApp, fetchTags, fetchPlatforms } from '$lib/firebase/firestoreService';
 
 	let name = '';
 	let description = '';
 	let organization = '';
 	let price = '';
-	let tags = '';
+	let tags = [];
+	let selectedTags = [];
+	let platforms = [];
+	let platformLinks = {};
 	let isSubmitting = false;
 	const dispatch = createEventDispatcher();
+
+	onMount(async () => {
+		tags = await fetchTags();
+		platforms = await fetchPlatforms();
+	});
 
 	const handleAddApp = async () => {
 		if (isSubmitting) return;
 		isSubmitting = true;
 
-		if (name && description && organization && price && tags) {
-			const tagsArray = tags.split(',').map((tag) => tag.trim());
-			const newApp = await requestApp(
-				name,
-				description,
-				organization,
-				price === '0.00' ? 'Free' : price,
-				tagsArray
-			);
-			dispatch('appadded', newApp);
+		if (name && description && organization && price && selectedTags.length > 0) {
+			try {
+				const newApp = await requestApp(
+					name,
+					description,
+					organization,
+					price,
+					selectedTags,
+					platformLinks
+				);
+				dispatch('appadded', newApp);
+			} catch (error) {
+				console.error('Error adding app:', error.message);
+			}
+		} else {
+			console.error('All fields are required');
 		}
 
 		isSubmitting = false;
+	};
+
+	const toggleTag = (tag) => {
+		if (selectedTags.includes(tag)) {
+			selectedTags = selectedTags.filter((t) => t !== tag);
+		} else {
+			selectedTags = [...selectedTags, tag];
+		}
+	};
+
+	const updatePlatformLink = (platform, link) => {
+		platformLinks = { ...platformLinks, [platform]: link };
 	};
 </script>
 
@@ -74,22 +100,41 @@
 		<div class="mb-4">
 			<label for="app-price" class="block text-gray-700 dark:text-gray-300">Price</label>
 			<input
-				type="text"
+				type="number"
+				step="0.01"
 				class="border rounded-md px-3 w-full bg-white dark:bg-black dark:text-white border-gray-300"
 				bind:value={price}
 				id="app-price"
 			/>
 		</div>
 		<div class="mb-4">
-			<label for="app-tags" class="block text-gray-700 dark:text-gray-300"
-				>Tags (comma separated)</label
-			>
-			<input
-				type="text"
-				class="border rounded-md px-3 w-full bg-white dark:bg-black dark:text-white border-gray-300"
-				bind:value={tags}
-				id="app-tags"
-			/>
+			<label class="block text-gray-700 dark:text-gray-300">Tags</label>
+			<div class="flex flex-wrap">
+				{#each tags as tag}
+					<button
+						type="button"
+						class="m-1 px-3 py-1 rounded-md border border-gray-300"
+						class:selected={selectedTags.includes(tag)}
+						on:click={() => toggleTag(tag)}
+					>
+						{tag}
+					</button>
+				{/each}
+			</div>
+		</div>
+		<div class="mb-4">
+			<label class="block text-gray-700 dark:text-gray-300">Platforms</label>
+			{#each platforms as platform}
+				<div class="mb-2">
+					<label class="block text-gray-700 dark:text-gray-300">{platform}</label>
+					<input
+						type="text"
+						class="border rounded-md px-3 w-full bg-white dark:bg-black dark:text-white border-gray-300"
+						placeholder="Enter link"
+						on:input={(e) => updatePlatformLink(platform, e.target.value)}
+					/>
+				</div>
+			{/each}
 		</div>
 		<div class="flex flex-col justify-center text-center">
 			<p class="text-gray-400">
@@ -102,3 +147,10 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	.selected {
+		background-color: #4caf50;
+		color: white;
+	}
+</style>

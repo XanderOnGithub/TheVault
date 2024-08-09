@@ -45,13 +45,30 @@ export const fetchAppById = async (id) => {
  * @param {string} organization - The organization that created the app.
  * @param {string} price - The price of the app.
  * @param {Array<string>} tags - An array of tags associated with the app.
+ * @param {Object} platforms - An object where keys are platform names and values are platform links.
  * @returns {Promise<Object|null>} - A promise that resolves to the requested app object, otherwise null.
  * @throws {Error} - If the app data is invalid.
  */
-export const requestApp = async (name, description, organization, price, tags) => {
-    if (!name || !description || !organization || !price || !Array.isArray(tags)) {
-        throw new Error('Invalid app data');
+export const requestApp = async (name, description, organization, price, tags, platforms) => {
+    if (!name) {
+        throw new Error('Invalid app data: name is required');
     }
+    if (!description) {
+        throw new Error('Invalid app data: description is required');
+    }
+    if (!organization) {
+        throw new Error('Invalid app data: organization is required');
+    }
+    if (!price) {
+        throw new Error('Invalid app data: price is required');
+    }
+    if (!Array.isArray(tags)) {
+        throw new Error('Invalid app data: tags must be an array');
+    }
+    if (typeof platforms !== 'object' || platforms === null) {
+        throw new Error('Invalid app data: platforms must be an object');
+    }
+
     try {
         const docRef = await addDoc(collection(db, 'requested_apps'), {
             name,
@@ -59,15 +76,15 @@ export const requestApp = async (name, description, organization, price, tags) =
             organization,
             price,
             tags,
+            platforms,
             createdAt: serverTimestamp()
         });
-        return { id: docRef.id, name, description, organization, price, tags };
+        return { id: docRef.id, name, description, organization, price, tags, platforms };
     } catch (error) {
         console.error('Error requesting app:', error.message);
         return null;
     }
 };
-
 /**
  * Fetches reviews for a specific app by its ID from the Firestore database.
  * @param {string} appId - The ID of the app to fetch reviews for.

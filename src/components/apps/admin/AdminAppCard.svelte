@@ -47,7 +47,7 @@
 
 		<div class="flex justify-between items-center">
 			<p class="text-lg mono text-gray-400">
-				{app.price === '0.00' ? 'FREE' : app.price}
+				{app.price === '0.00' || '0' || '0.0' ? 'FREE' : app.price}
 			</p>
 			<div class="flex flex-row space-x-3">
 				<button class="btn btn-primary" on:click={() => handleRequest(true)}>Accept</button>

@@ -15,7 +15,7 @@
 	let selectedPlatform = writable(''); // Store for selected platform
 	let sortBy = writable('Newest'); // Store for sort by criteria
 	const apps = writable([]);
-	const showModal = writable(false);
+	let showModal = false;
 	const tagOptions = writable([]);
 	const platformOptions = writable([]); // Store for platform options
 	let currentUser = null;
@@ -98,11 +98,19 @@
 		selectedTags.set([]);
 	};
 
+	const openModal = () => {
+		showModal = true;
+	};
+
+	const closeModal = () => {
+		showModal = false;
+	};
+
 	/**
 	 * Event handler for adding a new app.
 	 */
 	const handleAppAdded = () => {
-		showModal.set(false);
+		closeModal();
 	};
 
 	onMount(() => {
@@ -235,7 +243,7 @@
 	{#if currentUser !== null}
 		<div class="flex justify-end mb-4">
 			<!-- Button to open the modal for adding a new app -->
-			<button class="btn btn-primary flex items-center" on:click={() => showModal.set(true)}>
+			<button class="btn btn-primary flex items-center" on:click={() => openModal()}>
 				<!-- Add icon -->
 				<span class="mr-2">+</span>
 				Request App
@@ -255,3 +263,6 @@
 </main>
 <!-- Footer Component -->
 <VaultFooter />
+{#if showModal}
+	<NewAppModal on:close={closeModal} on:appadded={handleAppAdded} />
+{/if}

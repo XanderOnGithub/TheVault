@@ -62,14 +62,21 @@
 	 * @async
 	 */
 	async function loadUsernames() {
-		usernames = await fetchUsernames();
-		combinedReviews = Object.keys(app.reviews).map((userID) => ({
-			userID,
-			review: app.reviews[userID],
-			rating: app.ratings[userID],
-			username: usernames[userID]
-		}));
-		calculateAverageRating();
+		try {
+			const usernames = await fetchUsernames();
+			if (!app.reviews || !app.ratings || !usernames) {
+				throw new Error('Missing data for reviews, ratings, or usernames');
+			}
+
+			combinedReviews = Object.keys(app.reviews).map((userID) => ({
+				userID,
+				review: app.reviews[userID],
+				rating: app.ratings[userID],
+				username: usernames[userID]
+			}));
+
+			calculateAverageRating();
+		} catch (error) {}
 	}
 
 	/**
