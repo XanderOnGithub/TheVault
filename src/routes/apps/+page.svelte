@@ -165,7 +165,7 @@
 	<div class="flex flex-col sm:flex-row mx-auto mb-4 w-full px-6">
 		<!-- Sort By Dropdown -->
 		<select
-			class="mx-auto px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
+			class="my-1 sm:my-0 mx-auto px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
 			on:change={handleSortByChange}
 		>
 			<option value="Newest">Newest -> Oldest</option>
@@ -178,7 +178,7 @@
 
 		<!-- Platform Dropdown -->
 		<select
-			class="mx-auto sm:ml-2 px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
+			class="my-1 sm:my-0 mx-auto sm:ml-2 px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
 			on:change={handlePlatformChange}
 		>
 			<option value="">All Platforms</option>
@@ -191,7 +191,7 @@
 		<input
 			type="text"
 			placeholder="Search apps..."
-			class="sm:ml-2 mx-auto px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
+			class="my-1 sm:my-0 sm:ml-2 mx-auto px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
 			on:input={handleSearch}
 		/>
 	</div>
