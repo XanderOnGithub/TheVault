@@ -144,7 +144,10 @@
 				const matchesPlatform =
 					!$selectedPlatform || Object.keys(app.platforms).includes(selectedPlatformLower);
 				const matchesTags =
-					!$selectedTags.length || $selectedTags.every((tag) => app.tags.includes(tag));
+					!$selectedTags.length ||
+					$selectedTags.every((tag) =>
+						app.tags.map((t) => t.toLowerCase()).includes(tag.toLowerCase())
+					);
 				return matchesSearchQuery && matchesPlatform && matchesTags;
 			});
 
