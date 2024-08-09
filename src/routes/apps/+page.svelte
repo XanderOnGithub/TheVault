@@ -6,15 +6,18 @@
 	import AppNav from '../../components/apps/AppNav.svelte';
 	import VaultFooter from '../../components/vaultFooter.svelte';
 	import { writable, derived } from 'svelte/store';
-	import { fetchApps, fetchTags } from '$lib/firebase/firestoreService';
+	import { fetchApps, fetchTags, fetchPlatforms } from '$lib/firebase/firestoreService';
 	import { user } from '../../lib/firebase/authService'; // Import the user store
 
 	// Initialize state variables
 	let searchQuery = writable('');
 	let selectedTags = [];
+	let selectedPlatform = writable(''); // Store for selected platform
+	let sortBy = writable('Newest'); // Store for sort by criteria
 	const apps = writable([]);
 	const showModal = writable(false);
 	const tagOptions = writable([]);
+	const platformOptions = writable([]); // Store for platform options
 
 	let currentUser = null;
 
@@ -28,31 +31,128 @@
 		unsubscribe();
 	});
 
-	// Function to fetch the available tag options and app list
+	/**
+	 * Convert a string to title case.
+	 * @param {string} str - The string to convert.
+	 * @returns {string} - The converted string in title case.
+	 */
+	function toTitleCase(str) {
+		return str.replace(/\w\S*/g, function (txt) {
+			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+		});
+	}
+
+	/**
+	 * Fetch the available tag options, platform options, and app list.
+	 */
 	const initializeData = async () => {
 		try {
-			const [tags, appList] = await Promise.all([fetchTags(), fetchApps(selectedTags)]);
+			const [tags, platforms, appList] = await Promise.all([
+				fetchTags(),
+				fetchPlatforms(),
+				fetchApps(selectedTags)
+			]);
 			tagOptions.set(tags);
+			platformOptions.set(platforms.sort()); // Sort platforms alphabetically
 			apps.set(appList);
 		} catch (error) {
 			console.error('Error initializing data:', error);
 		}
 	};
 
-	// Fetch tag options and app list on component mount
+	// Fetch tag options, platform options, and app list on component mount
 	onMount(initializeData);
 
-	// Derived store to filter apps based on the search query
-	const filteredApps = derived([apps, searchQuery], ([$apps, $searchQuery]) =>
-		$apps.filter((app) => app.name.toLowerCase().includes($searchQuery.toLowerCase()))
+	/**
+	 * Parse Firestore Timestamp to JavaScript Date.
+	 * @param {Object} timestamp - The Firestore Timestamp object.
+	 * @param {number} timestamp.seconds - The seconds part of the timestamp.
+	 * @param {number} timestamp.nanoseconds - The nanoseconds part of the timestamp.
+	 * @returns {Date} - The parsed JavaScript Date object.
+	 */
+	function parseDate(timestamp) {
+		if (timestamp && timestamp.seconds !== undefined) {
+			return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+		}
+		return new Date(NaN);
+	}
+
+	// Derived store to filter and sort apps based on the search query, selected platform, and sort criteria
+	const filteredApps = derived(
+		[apps, searchQuery, selectedPlatform, sortBy],
+		([$apps, $searchQuery, $selectedPlatform, $sortBy]) => {
+			const searchQueryLower = $searchQuery.toLowerCase();
+			const selectedPlatformLower = $selectedPlatform.toLowerCase();
+
+			let filtered = $apps.filter((app) => {
+				const matchesSearchQuery =
+					!$searchQuery || app.name.toLowerCase().includes(searchQueryLower);
+				const matchesPlatform =
+					!$selectedPlatform || Object.keys(app.platforms).includes(selectedPlatformLower);
+				return matchesSearchQuery && matchesPlatform;
+			});
+
+			// Sort the filtered apps based on the selected sort criteria
+			switch ($sortBy) {
+				case 'Newest':
+					filtered.sort((a, b) => {
+						const dateA = parseDate(a.createdAt);
+						const dateB = parseDate(b.createdAt);
+						return dateB - dateA;
+					});
+					break;
+				case 'Oldest':
+					filtered.sort((a, b) => {
+						const dateA = parseDate(a.createdAt);
+						const dateB = parseDate(b.createdAt);
+						return dateA - dateB;
+					});
+					break;
+				case 'Name A -> Z':
+					filtered.sort((a, b) => a.name.localeCompare(b.name));
+					break;
+				case 'Name Z -> A':
+					filtered.sort((a, b) => b.name.localeCompare(a.name));
+					break;
+				case 'Price Increasing':
+					filtered.sort((a, b) => a.price - b.price);
+					break;
+				case 'Price Decreasing':
+					filtered.sort((a, b) => b.price - a.price);
+					break;
+			}
+
+			return filtered;
+		}
 	);
 
-	// Event handler for search input
+	/**
+	 * Event handler for search input.
+	 * @param {Event} event - The input event.
+	 */
 	const handleSearch = (event) => {
 		searchQuery.set(event.target.value);
 	};
 
-	// Event handler for adding a new app
+	/**
+	 * Event handler for platform selection.
+	 * @param {Event} event - The change event.
+	 */
+	const handlePlatformChange = (event) => {
+		selectedPlatform.set(event.target.value);
+	};
+
+	/**
+	 * Event handler for sort by selection.
+	 * @param {Event} event - The change event.
+	 */
+	const handleSortByChange = (event) => {
+		sortBy.set(event.target.value);
+	};
+
+	/**
+	 * Event handler for adding a new app.
+	 */
 	const handleAppAdded = () => {
 		showModal.set(false);
 	};
@@ -62,12 +162,36 @@
 <AppNav {currentUser} />
 
 <main class="p-8 bg-white dark:bg-black text-black dark:text-white min-h-screen">
-	<div class="flex mb-4 w-full px-6 justify-center">
+	<div class="flex flex-col sm:flex-row mx-auto mb-4 w-full px-6">
+		<!-- Sort By Dropdown -->
+		<select
+			class="mx-auto px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
+			on:change={handleSortByChange}
+		>
+			<option value="Newest">Newest -> Oldest</option>
+			<option value="Oldest">Oldest -> Newest</option>
+			<option value="Name A -> Z">Name A -> Z</option>
+			<option value="Name Z -> A">Name Z -> A</option>
+			<option value="Price Increasing">Price Increasing</option>
+			<option value="Price Decreasing">Price Decreasing</option>
+		</select>
+
+		<!-- Platform Dropdown -->
+		<select
+			class="mx-auto sm:ml-2 px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
+			on:change={handlePlatformChange}
+		>
+			<option value="">All Platforms</option>
+			{#each $platformOptions as platform}
+				<option value={platform}>{platform}</option>
+			{/each}
+		</select>
+
 		<!-- Search Bar -->
 		<input
 			type="text"
 			placeholder="Search apps..."
-			class="px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white"
+			class="sm:ml-2 mx-auto px-2 py-2 rounded-md border border-gray-300 bg-white dark:bg-black dark:text-white w-48"
 			on:input={handleSearch}
 		/>
 	</div>

@@ -322,3 +322,17 @@ export const handleAppRequest = async (requestId, accept) => {
         return false;
     }
 };
+
+/**
+ * Fetches all Platforms from Platform db
+ */
+export const fetchPlatforms = async () => {
+    try {
+        const platformQuery = collection(db, 'platforms');
+        const querySnapshot = await getDocs(platformQuery);
+        return querySnapshot.docs.map(doc => doc.data().name);
+    } catch (error) {
+        console.error('Error fetching platforms:', error.message);
+        return [];
+    }
+};
