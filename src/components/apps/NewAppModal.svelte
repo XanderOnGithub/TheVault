@@ -67,7 +67,7 @@
 		>
 			✖
 		</button>
-		<h2 class="text-2xl font-bold mb-4 text-accent text-center">Request New App</h2>
+		<h2 class="text-2xl font-bold mb-4 text-black dark:text-white text-center">Request New App</h2>
 		<div class="mb-4">
 			<label for="app-name" class="block text-gray-700 dark:text-gray-300">App Name</label>
 			<input
@@ -141,7 +141,11 @@
 				By requesting this application, you are agreeing that this application follows our terms of
 				service.
 			</p>
-			<button class="btn btn-primary mt-5" on:click={handleAddApp} disabled={isSubmitting}>
+			<button
+				class="btn btn-primary mt-5 text-black dark:text-white"
+				on:click={handleAddApp}
+				disabled={isSubmitting}
+			>
 				{isSubmitting ? 'Submitting...' : 'Add App'}
 			</button>
 		</div>
