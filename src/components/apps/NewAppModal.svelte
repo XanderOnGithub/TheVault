@@ -58,7 +58,7 @@
 
 <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
 	<div
-		class="bg-white dark:bg-black border border-gray-300 px-6 py-6 rounded-md shadow-lg max-w-md w-full relative"
+		class="bg-white dark:bg-black border border-gray-300 px-6 py-6 rounded-md shadow-lg max-w-md w-full relative overflow-y-auto max-h-screen"
 	>
 		<!-- Close button in the top right corner -->
 		<button
@@ -154,7 +154,7 @@
 
 <style>
 	.selected {
-		background-color: #4caf50;
+		background-color: lightblue;
 		color: white;
 	}
 </style>
