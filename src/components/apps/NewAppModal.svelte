@@ -113,7 +113,7 @@
 				{#each tags as tag}
 					<button
 						type="button"
-						class="m-1 px-3 py-1 rounded-md border border-gray-300"
+						class="m-1 px-3 py-1 rounded-md border border-gray-300 text-gray-700 dark:text-gray-300"
 						class:selected={selectedTags.includes(tag)}
 						on:click={() => toggleTag(tag)}
 					>
